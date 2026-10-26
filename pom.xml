@@ -63,6 +63,11 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc</artifactId>
     </dependency>
+    <!-- Extensão 1: gRPC, o sucessor moderno do RMI (starter nativo do Spring Boot 4.1) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-grpc-server</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>javax.cache</groupId>
@@ -178,6 +183,11 @@
       <artifactId>testcontainers-mysql</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-grpc-server-test</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -251,6 +261,27 @@
       <plugin>
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
+      </plugin>
+      <!-- Extensão 1: gera as classes Java a partir de src/main/protobuf/*.proto.
+        A versão do protoc e o plugin grpc-java já vêm configurados pelo spring-boot-starter-parent -->
+      <plugin>
+        <groupId>io.github.ascopes</groupId>
+        <artifactId>protobuf-maven-plugin</artifactId>
+      </plugin>
+      <!-- Extensão 1: roda o cliente gRPC de linha de comando em uma JVM separada do servidor.
+        Uso: ./mvnw -q compile exec:java@cliente-grpc -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.6.4</version>
+        <executions>
+          <execution>
+            <id>cliente-grpc</id>
+            <configuration>
+              <mainClass>org.springframework.samples.petclinic.grpc.cliente.ClienteGrpc</mainClass>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
