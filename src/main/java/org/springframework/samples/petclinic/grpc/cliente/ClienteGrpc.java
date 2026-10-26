@@ -33,8 +33,9 @@ import io.grpc.ManagedChannelBuilder;
  * é a mesma (chamar um método remoto através de um stub), mas o transporte é HTTP/2 e os
  * dados são serializados com Protocol Buffers.
  * <p>
- * Para rodar, com o PetClinic no ar: {@code ./mvnw -q compile exec:java@cliente-grpc}.
- * Também aceita host e porta como argumentos.
+ * Para rodar, com o PetClinic no ar: {@code ./mvnw -q exec:java@cliente-grpc}. Não use
+ * "compile" antes: recompilar faz o DevTools reiniciar a aplicação, e o gRPC fica fora do
+ * ar por alguns segundos. Também aceita host e porta como argumentos.
  */
 public final class ClienteGrpc {
 

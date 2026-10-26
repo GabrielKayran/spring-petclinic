@@ -274,7 +274,8 @@
         <artifactId>protobuf-maven-plugin</artifactId>
       </plugin>
       <!-- Extensão 1: roda o cliente gRPC de linha de comando em uma JVM separada do servidor.
-        Uso: ./mvnw -q compile exec:java@cliente-grpc -->
+        Uso, com a aplicação no ar: ./mvnw -q exec:java@cliente-grpc (sem "compile": recompilar faria o
+        DevTools reiniciar a aplicação e derrubar o gRPC por alguns segundos) -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
