@@ -46,3 +46,6 @@ out/
 _site/
 *.css
 !petclinic.css
+
+# Painel do estudo de caso: CSS escrito à mão (não é gerado a partir do SCSS)
+!src/main/resources/static/resources/css/painel.css

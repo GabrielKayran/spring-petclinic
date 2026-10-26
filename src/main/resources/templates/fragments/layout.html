@@ -53,6 +53,11 @@
             <span th:text="#{vets}">Veterinarians</span>
           </li>
 
+          <li th:replace="~{::menuItem ('/painel','painel','case study dashboard','graduation-cap',#{caseStudy})}">
+            <span class="fa fa-graduation-cap" aria-hidden="true"></span>
+            <span th:text="#{caseStudy}">Case study</span>
+          </li>
+
           <li
             th:replace="~{::menuItem ('/oups','error','trigger a RuntimeException to see how it is handled','exclamation-triangle',#{error})}">
             <span class="fa exclamation-triangle" aria-hidden="true"></span>

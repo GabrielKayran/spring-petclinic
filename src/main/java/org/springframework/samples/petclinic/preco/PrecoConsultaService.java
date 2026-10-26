@@ -45,9 +45,16 @@ public class PrecoConsultaService {
 	}
 
 	public BigDecimal calcularPreco(Pet pet) {
+		return estrategiaPara(pet).calcularPreco(pet);
+	}
+
+	/**
+	 * Escolhe a estratégia pelo tipo do pet. É público para o painel do estudo de caso
+	 * mostrar qual classe foi usada.
+	 */
+	public PrecoConsultaStrategy estrategiaPara(Pet pet) {
 		String tipo = Optional.ofNullable(pet.getType()).map(PetType::getName).orElse(PrecoConsultaPadrao.NOME);
-		PrecoConsultaStrategy estrategia = this.estrategiasPorTipo.getOrDefault(tipo, this.estrategiaPadrao);
-		return estrategia.calcularPreco(pet);
+		return this.estrategiasPorTipo.getOrDefault(tipo, this.estrategiaPadrao);
 	}
 
 }
