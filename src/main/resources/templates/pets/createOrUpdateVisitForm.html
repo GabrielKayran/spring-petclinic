@@ -27,6 +27,12 @@
     </tr>
   </table>
 
+  <!-- Extensão 4 (Strategy): preço calculado pela estratégia do tipo do pet -->
+  <p th:if="${precoConsulta != null}" id="precoConsulta">
+    <b th:text="#{consultationPrice}">Consultation price</b>:
+    <span th:text="${'R$ ' + #numbers.formatDecimal(precoConsulta, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
+  </p>
+
   <form th:object="${visit}" class="form-horizontal" method="post">
     <div class="form-group has-feedback">
       <input th:replace="~{fragments/inputField :: input ('Date', 'date', 'date')}" />
