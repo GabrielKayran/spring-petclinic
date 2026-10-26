@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.samples.petclinic.lembrete.VisitaRegistradaEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -44,8 +46,11 @@ class VisitController {
 
 	private final OwnerRepository owners;
 
-	public VisitController(OwnerRepository owners) {
+	private final ApplicationEventPublisher eventos;
+
+	public VisitController(OwnerRepository owners, ApplicationEventPublisher eventos) {
 		this.owners = owners;
+		this.eventos = eventos;
 	}
 
 	@InitBinder
@@ -107,6 +112,12 @@ class VisitController {
 
 		owner.addVisit(petId, visit);
 		this.owners.save(owner);
+
+		// Extensão 3 (Observer): avisa os interessados que uma visita foi registrada.
+		// O controller não conhece quem vai reagir ao evento, só o publica.
+		this.eventos.publishEvent(new VisitaRegistradaEvent(this, owner.getFirstName() + " " + owner.getLastName(),
+				owner.getPet(petId).getName(), visit.getDate(), visit.getDescription()));
+
 		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");
 		return "redirect:/owners/{ownerId}";
 	}
