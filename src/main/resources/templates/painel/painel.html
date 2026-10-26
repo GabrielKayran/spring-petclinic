@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'painel')}">
+
+<body>
+
+  <!-- Painel do estudo de caso. Todo o conteúdo é montado por /resources/js/painel.js,
+       que chama a API /api/painel/* e os endpoints reais do PetClinic. -->
+  <link rel="stylesheet" th:href="@{/resources/css/painel.css(v=${versao})}" />
+  <div id="painel"></div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+  <script th:src="@{/resources/js/painel.js(v=${versao})}"></script>
+
+</body>
+
+</html>
