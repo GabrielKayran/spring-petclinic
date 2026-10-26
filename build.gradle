@@ -7,6 +7,8 @@ plugins {
   id 'org.cyclonedx.bom' version '3.2.4'
   id 'io.spring.javaformat' version '0.0.47'
   id "io.spring.nohttp" version "0.0.11"
+  // Extensão 1: gera as classes Java/gRPC a partir de src/main/protobuf/*.proto
+  id 'com.google.protobuf' version '0.10.0'
 }
 
 gradle.startParameter.excludedTaskNames += [ "checkFormatAot", "checkFormatAotTest" ]
@@ -36,6 +38,9 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
   implementation 'org.springframework.boot:spring-boot-starter-webmvc'
   implementation 'org.springframework.boot:spring-boot-starter-validation'
+  // Extensão 1 (gRPC) e Extensão 5 (AOP)
+  implementation 'org.springframework.boot:spring-boot-starter-grpc-server'
+  implementation 'org.springframework.boot:spring-boot-starter-aspectj'
   implementation 'javax.cache:cache-api'
   implementation 'jakarta.xml.bind:jakarta.xml.bind-api'
   runtimeOnly 'org.springframework.boot:spring-boot-starter-actuator'
@@ -54,6 +59,7 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-docker-compose'
   testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
   testImplementation 'org.testcontainers:testcontainers-mysql'
+  testImplementation 'org.springframework.boot:spring-boot-starter-grpc-server-test'
   checkstyle "io.spring.javaformat:spring-javaformat-checkstyle:${springJavaformatCheckstyleVersion}"
   checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
 }
@@ -91,3 +97,29 @@ checkFormatAotTest.enabled = false
 
 formatAot.enabled = false
 formatAotTest.enabled = false
+// Extensão 1: mesma geração de código que o protobuf-maven-plugin faz no build Maven
+sourceSets {
+  main {
+    proto {
+      srcDir 'src/main/protobuf'
+    }
+  }
+}
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:${dependencyManagement.importedProperties['protobuf-java.version']}"
+  }
+  plugins {
+    grpc {
+      artifact = "io.grpc:protoc-gen-grpc-java:${dependencyManagement.importedProperties['grpc-java.version']}"
+    }
+  }
+  generateProtoTasks {
+    all()*.plugins {
+      grpc {
+        option '@generated=omit'
+      }
+    }
+  }
+}
