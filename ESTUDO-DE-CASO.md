@@ -14,7 +14,7 @@ Em cada uma mostramos a **tecnologia clássica** ensinada na disciplina e o seu 
 | + | **Painel `/painel`** (vitrine ao vivo das 5) + deploy no Render | `...petclinic.painel`, `Dockerfile`, `render.yaml` | `extensao/6-painel-render` |
 
 As branches 1 a 5 saem do mesmo commit base (atualização para Java 21) e não dependem umas
-das outras. O painel depende de todas, porque só exibe o que elas fazem. A branch `estudo-de-caso` junta tudo.
+das outras. O painel depende de todas, porque só exibe o que elas fazem. A branch `estudo-de-caso` juntou tudo e foi mesclada na `main`, que é a branch usada no deploy.
 
 **Pré-requisitos:** JDK 21 ou mais recente (necessário para as virtual threads). O projeto usa
 Spring Boot 4.1.0. Se o `java -version` da máquina mostrar 17, aponte o `JAVA_HOME` para um JDK 21
@@ -473,8 +473,8 @@ Sim, dá para publicar no Render. Como o Render não tem runtime Java nativo, o 
 
 ### Passo a passo
 
-1. Envie a branch `estudo-de-caso` para o GitHub do grupo (o Render faz deploy a partir do repositório).
-2. No [dashboard do Render](https://dashboard.render.com): **New → Blueprint**, escolha o repositório e a branch.
+1. Envie a `main` para o GitHub do grupo (o Render faz deploy a partir do repositório).
+2. No [dashboard do Render](https://dashboard.render.com): **New → Blueprint**, escolha o repositório e a branch `main`.
    O Render lê o `render.yaml`.
 3. Ele vai pedir os valores marcados como `sync: false`. Preencha com os dados do Neon:
    - `POSTGRES_URL` = `jdbc:postgresql://<host-do-neon>/neondb?sslmode=require&channelBinding=require`
