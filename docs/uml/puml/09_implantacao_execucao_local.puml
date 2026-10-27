@@ -1,0 +1,34 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+node "Notebook Windows" {
+  artifact "Navegador" as browser
+  node "JVM Java 21 - Spring Boot" {
+    component "Tomcat / Spring MVC\nHTTP :8080" as http
+    component "Servidor gRPC Netty\n:9090" as grpc
+    component "Domínio, eventos, AOP\nJPA / Hibernate" as app
+    database "H2 em memória\nprofile default" as h2
+    http --> app
+    http --> grpc : gRPC via localhost
+    app --> h2 : JDBC
+  }
+  browser --> http : localhost:8080
+  node "Demo RMI independente" {
+    node "JVM cliente" {
+      artifact "Cliente RMI" as rmic
+    }
+    node "JVM servidor" {
+      component "RMI Registry :1099" as reg
+      artifact "Servidor RMI" as rmis
+      rmis --> reg : createRegistry()
+    }
+    rmic --> reg : lookup
+    rmic --> rmis : chamada remota
+  }
+}
+database "PostgreSQL / Neon\n(só profile postgres)" as pg
+app ..> pg : alternativo ao H2
+note bottom of pg
+  Não ativo no teste local do usuário.
+end note
+@enduml

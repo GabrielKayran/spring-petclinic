@@ -1,0 +1,32 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+annotation Auditado {
+ + value(): String
+}
+class AuditoriaAspect <<@Aspect, @Component>> {
+ + auditar(joinPoint, auditado): Object
+}
+class OwnerController <<@Controller>> {
+  + showOwner(ownerId): ModelAndView
+}
+class VetController <<@Controller>> {
+  + showResourcesVetList(): Vets
+}
+class VisitController <<@Controller>> {
+  + processNewVisitForm(...): String
+}
+class "Proxy CGLIB (runtime)" as Proxy <<gerado pelo Spring>>
+AuditoriaAspect ..> Auditado : @Around / pointcut
+OwnerController ..> Auditado : @Auditado
+VetController ..> Auditado : @Auditado
+VisitController ..> Auditado : @Auditado
+Proxy ..> AuditoriaAspect : executa advice
+Proxy ..> OwnerController : delega
+Proxy ..> VetController : delega
+Proxy ..> VisitController : delega
+note bottom of Proxy
+  Representação conceitual dos proxies;
+  classes geradas em tempo de execução.
+end note
+@enduml

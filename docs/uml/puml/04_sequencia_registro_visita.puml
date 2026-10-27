@@ -1,0 +1,39 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+title Registro de visita: persistência, Observer e AOP
+actor "Usuário" as U
+participant "Spring MVC" as MVC
+participant "Proxy AOP" as AOP
+participant "VisitController" as VC
+participant "OwnerRepository" as Repo
+database "H2 (via JPA)" as DB
+participant "ApplicationEventPublisher" as Pub
+participant "LembreteVisitaListener" as Listener
+U -> MVC : POST /owners/{ownerId}/pets/{petId}/visits/new
+MVC -> AOP : processNewVisitForm(...)
+AOP -> VC : proceed()
+VC -> VC : validar Visit
+alt dados válidos
+  VC -> VC : owner.addVisit(petId, visit)
+  VC -> Repo : save(owner)
+  Repo -> DB : persistir (JPA/Hibernate)
+  DB --> Repo : confirmação
+  Repo --> VC : retorna
+  VC -> Pub : publishEvent(VisitaRegistradaEvent)
+  Pub ->> Listener : @EventListener + @Async
+  activate Listener
+  VC --> AOP : redirect:/owners/{ownerId}
+  AOP -> AOP : log [AUDITORIA]
+  AOP --> MVC : 302
+  MVC --> U : HTTP 302
+  ... em outra thread ...
+  Listener -> Listener : sleep(2 s) simula lembrete
+  note right of Listener: Sem envio real de SMS/e-mail
+  deactivate Listener
+else inválidos
+  VC --> AOP : retorna formulário com erros
+  AOP --> MVC : retorna view
+  MVC --> U : HTTP 200, formulário
+end
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+class VisitController <<@Controller>> {
+ - owners: OwnerRepository
+ - eventos: ApplicationEventPublisher
+ + processNewVisitForm(...): String
+}
+interface OwnerRepository
+interface ApplicationEventPublisher {
+ + publishEvent(event): void
+}
+class ApplicationEvent
+class VisitaRegistradaEvent {
+ - nomeDono: String
+ - nomePet: String
+ - dataVisita: LocalDate
+ - descricao: String
+}
+class LembreteVisitaListener <<@Component>> {
+ + enviarLembrete(event: VisitaRegistradaEvent): void
+}
+class LembreteAsyncConfiguration <<@EnableAsync>>
+ApplicationEvent <|-- VisitaRegistradaEvent
+VisitController --> OwnerRepository : save(owner)
+VisitController --> ApplicationEventPublisher : publishEvent
+VisitController ..> VisitaRegistradaEvent : cria
+LembreteVisitaListener ..> VisitaRegistradaEvent : observa @EventListener
+LembreteAsyncConfiguration ..> LembreteVisitaListener : @Async
+note right of LembreteVisitaListener
+  Thread.sleep(2 s) simula lembrete.
+  Sem envio externo real.
+end note
+@enduml

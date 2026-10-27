@@ -1,0 +1,22 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+start
+:POST /owners/{ownerId}/pets/new;
+:Validar nome, data de nascimento e demais campos;
+if (Dados válidos?) then (não)
+ :Retornar formulário com erros;
+ stop
+else (sim)
+ :Owner.addPet(pet);
+ :OwnerRepository.saveAndFlush(owner);
+ :Banco aplica UNIQUE(owner_id, name);
+ if (DataIntegrityViolationException por duplicidade?) then (sim)
+   :Tratar exceção e mostrar erro de nome duplicado;
+   stop
+ else (não)
+   :Redirecionar para detalhes do tutor;
+   stop
+ endif
+endif
+@enduml

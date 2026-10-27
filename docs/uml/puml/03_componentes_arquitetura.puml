@@ -1,0 +1,32 @@
+@startuml
+skinparam backgroundColor white
+skinparam componentStyle rectangle
+skinparam shadowing false
+actor "Usuário / navegador" as UI
+component "Spring MVC / Thymeleaf\nTomcat HTTP 8080" as WEB
+component "Owner / Pet / Visit / Vet\nControllers" as C
+component "PrecoConsultaService\nStrategy" as STRAT
+component "ApplicationEventPublisher\nListener @Async" as EVT
+component "AuditoriaAspect\nSpring AOP" as AOP
+component "OwnerRepository / VetRepository\nSpring Data JPA / Hibernate" as REPO
+database "H2 em memória\n(default)" as H2
+component "PainelController\n/painel" as PANEL
+component "GrpcDemoCliente" as GCLI
+component "VeterinarioGrpcService\nNetty :9090" as GSERV
+UI --> WEB : HTTP
+WEB --> C
+WEB --> PANEL
+C --> REPO
+WEB --> STRAT : via HandlerInterceptor
+C --> EVT
+AOP ..> C : intercepta
+REPO --> H2
+PANEL --> GCLI
+GCLI --> GSERV : gRPC/Protobuf
+GSERV --> REPO : findAll(vets)
+note bottom of PANEL
+  RMI puro fica fora da aplicação principal
+  (demos/rmi). Este diagrama retrata a
+  implementação integrada do Spring Boot.
+end note
+@enduml

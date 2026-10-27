@@ -1,0 +1,32 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+actor "Usuário" as U
+participant "Navegador /painel" as UI
+participant "PainelController :8080" as Panel
+participant "GrpcDemoCliente" as GClient
+participant "Stub / Canal gRPC :9090" as Channel
+participant "VeterinarioGrpcService" as GServer
+participant "VetRepository" as Repo
+database "H2 / cache" as H2
+U -> UI : clica em ListarVeterinarios
+UI -> Panel : GET /api/painel/grpc (HTTP)
+Panel -> GClient : listarVeterinarios()
+GClient -> Channel : newBlockingStub(...).listarVeterinarios()
+Channel -> GServer : ListarVeterinariosRequest (HTTP/2, Protobuf)
+GServer -> Repo : findAll()
+Repo -> H2 : consulta (ou cache)
+H2 --> Repo : veterinários
+Repo --> GServer : Collection<Vet>
+GServer -> GServer : converter Vet → Veterinario Protobuf
+GServer --> Channel : ListarVeterinariosResponse
+Channel --> GClient : mensagem Protobuf
+GClient -> GClient : medir duração, bytes Protobuf/JSON
+GClient --> Panel : ResultadoGrpc
+Panel --> UI : JSON de apresentação
+UI --> U : tabela e métricas
+note bottom of GClient
+  Comparação de payload em bytes.
+  O navegador não invoca gRPC diretamente.
+end note
+@enduml

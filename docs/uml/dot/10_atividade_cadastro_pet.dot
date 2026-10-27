@@ -1,0 +1,31 @@
+digraph G {
+  graph [rankdir=TB,bgcolor="transparent",pad=.28,nodesep=.56,ranksep=.70,splines=polyline,fontname="DejaVu Sans"];
+  node [shape=box,style="rounded,filled",color="#BFD0D6",fillcolor="#F4FAF8",fontname="DejaVu Sans",fontcolor="#203943",fontsize=15,margin=".22,.13"];
+  edge [color="#576F79",fontname="DejaVu Sans",fontcolor="#576F79",fontsize=12,arrowsize=.8,penwidth=1.6];
+  begin [shape=circle,label="",width=.25,fillcolor="#26956A",color="#26956A"];
+  recv [label="POST /owners/{ownerId}/pets/new"];
+  val [label="Validar nome, data e campos"];
+  decision [shape=diamond,label="Dados
+válidos?",fillcolor="#FFF4E4",color="#C69B5F"];
+  form [label="Retornar formulário
+com erros",fillcolor="#FFF4E4"];
+  addPet [label="Owner.addPet(pet)"];
+  save [label="OwnerRepository.saveAndFlush(owner)"];
+  db [label="Banco aplica UNIQUE(owner_id, name)",fillcolor="#EAF3F8"];
+  duplicate [shape=diamond,label="Violação
+de unicidade?",fillcolor="#FFF4E4",color="#C69B5F"];
+  error [label="Capturar DataIntegrityViolationException
+mostrar nome duplicado",fillcolor="#FFF4E4"];
+  success [label="Redirecionar para
+detalhes do tutor"];
+  end [shape=doublecircle,label="",width=.26,fillcolor="#26956A",color="#26956A"];
+  begin->recv->val->decision;
+  decision->form [label="não",color="#AF7932"];
+  decision->addPet [label="sim",color="#176749"];
+  addPet->save->db->duplicate;
+  duplicate->error [label="sim",color="#AF7932"];
+  duplicate->success [label="não",color="#176749"];
+  form->end;
+  error->end;
+  success->end;
+}

@@ -1,0 +1,56 @@
+@startuml
+skinparam backgroundColor white
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty methods
+class BaseEntity <<MappedSuperclass>> {
+  - id: Integer
+  + getId(): Integer
+  + isNew(): boolean
+}
+class Person <<MappedSuperclass>> {
+  - firstName: String
+  - lastName: String
+}
+class NamedEntity <<MappedSuperclass>> {
+  - name: String
+}
+class Owner <<Entity: owners>> {
+  - address: String
+  - city: String
+  - telephone: String
+  - pets: List<Pet>
+  + addPet(pet): void
+  + addVisit(petId, visit): void
+}
+class Vet <<Entity: vets>> {
+  - specialties: Set<Specialty>
+}
+class Pet <<Entity: pets>> {
+  - birthDate: LocalDate
+  - type: PetType
+  - visits: Set<Visit>
+}
+class Visit <<Entity: visits>> {
+  - date: LocalDate
+  - description: String
+}
+class PetType <<Entity: types>>
+class Specialty <<Entity: specialties>>
+BaseEntity <|-- Person
+BaseEntity <|-- NamedEntity
+BaseEntity <|-- Visit
+Person <|-- Owner
+Person <|-- Vet
+NamedEntity <|-- Pet
+NamedEntity <|-- PetType
+NamedEntity <|-- Specialty
+Owner "1" --> "0..*" Pet : pets
+Pet "1" --> "0..*" Visit : visits
+Pet "0..*" --> "1" PetType : type
+Vet "0..*" -- "0..*" Specialty : specialties
+note bottom of Visit
+  Sem ligação direta a Vet;
+  preço calculado não é salvo aqui.
+end note
+@enduml
