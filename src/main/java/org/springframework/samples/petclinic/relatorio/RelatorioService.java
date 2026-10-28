@@ -28,6 +28,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -63,6 +67,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Service
 public class RelatorioService {
 
+	private static final Logger log = LoggerFactory.getLogger(RelatorioService.class);
+
 	private static final String LAYOUT = "relatorios/pets-e-precos.jrxml";
 
 	private static final Locale PT_BR = Locale.of("pt", "BR");
@@ -76,6 +82,23 @@ public class RelatorioService {
 	public RelatorioService(OwnerRepository owners, PrecoConsultaService precoConsultaService) {
 		this.owners = owners;
 		this.precoConsultaService = precoConsultaService;
+	}
+
+	/**
+	 * Compila o layout em segundo plano assim que a aplicação fica pronta. No Render, com
+	 * pouca CPU, a primeira compilação levava cerca de 20 s; assim o primeiro relatório
+	 * pedido durante a apresentação já sai na hora.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
+	void compilarLayoutEmSegundoPlano() {
+		Thread.ofVirtual().name("compila-relatorio").start(() -> {
+			try {
+				layout();
+			}
+			catch (JRException | IOException | RuntimeException ex) {
+				log.warn("Não foi possível pré-compilar o relatório: {}", ex.getMessage());
+			}
+		});
 	}
 
 	/** Gera o PDF do relatório "Pets e preço da consulta". */

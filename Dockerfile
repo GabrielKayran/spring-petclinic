@@ -12,6 +12,8 @@ RUN chmod +x mvnw && ./mvnw -B -q dependency:resolve dependency:resolve-plugins 
 
 # Agora o código. Os testes rodam no CI/localmente; aqui só empacotamos.
 COPY src src
+# Diagramas UML exibidos na galeria do painel (copiados para /uml no build)
+COPY docs/uml/svg docs/uml/svg
 RUN ./mvnw -B -DskipTests package && cp target/spring-petclinic-*.jar app.jar
 
 # ---------- Etapa 2: execução ----------
