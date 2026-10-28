@@ -41,6 +41,15 @@
   gap: 1rem;
 }
 
+/* Pré-visualização do relatório PDF */
+.pn-pdf {
+  width: 100%;
+  height: 520px;
+  border: 1px solid var(--pn-borda);
+  border-radius: 8px;
+  background: #fff;
+}
+
 /* Galeria UML */
 .pn-uml {
   display: grid;

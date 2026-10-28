@@ -152,6 +152,7 @@
       <a href="#ext3">3. Observer + @Async</a>
       <a href="#ext4">4. Strategy</a>
       <a href="#ext5">5. AOP @Auditado</a>
+      <a href="#ext6">6. Relatório PDF</a>
       <a href="#uml">UML</a>
     </nav>
 
@@ -180,12 +181,12 @@
     ['1. Programação genérica', '<code>Repository&lt;Vet, Integer&gt;</code>, <code>Map&lt;String, PrecoConsultaStrategy&gt;</code>, <code>StreamObserver&lt;T&gt;</code>', 'demo logo abaixo'],
     ['2. Multithreading', 'virtual threads, <code>ExecutorService</code>, tarefas <code>Callable</code>/<code>Future</code>, <code>Semaphore</code> (sincronização), <code>@Async</code>', '<a href="#ext2">card 2</a>, <a href="#ext3">card 3</a>'],
     ['3. RMI', '<code>demos/rmi</code>: interface <code>Remote</code>, stub, Registry :1099 &rarr; sucessor gRPC', '<a href="#ext1">card 1</a>'],
-    ['4. Frameworks (MVC, dados, testes)', 'Spring MVC (sucessor do Struts), JPA/Hibernate, JUnit 5 (99 testes). Relatórios (Jasper) não fazem parte do projeto', 'todo o sistema'],
+    ['4. Frameworks (MVC, dados, testes, relatórios)', 'Spring MVC (sucessor do Struts), JPA/Hibernate, JUnit 5 (103 testes), JasperReports (PDF)', '<a href="#ext6">card 6</a> e todo o sistema'],
     ['5. Princípios e padrões', 'Strategy, Observer, Proxy, Template Method, Builder, MVC, Broker... e SOLID', '<a href="#ext3">3</a>, <a href="#ext4">4</a>, <a href="#ext5">5</a> e tabela abaixo'],
     ['6. Aspectos', 'concern, pointcut, advice, join point, weaving: <code>@Auditado</code> + <code>AuditoriaAspect</code>', '<a href="#ext5">card 5</a>'],
     ['7.1 Aplicação integrada', 'as 5 extensões rodando juntas no mesmo PetClinic', 'esta página'],
     ['7.2 Persistência', 'PostgreSQL no Neon via JPA/Hibernate (veja o cabeçalho)', 'cabeçalho'],
-    ['7.3 UML', '10 diagramas: casos de uso, classes, componentes, sequência, implantação, atividade', '<a href="#uml">galeria UML</a>']
+    ['7.3 UML', '11 diagramas: casos de uso, classes, componentes, sequência, implantação, atividade', '<a href="#uml">galeria UML</a>']
   ];
 
   const PADROES = [
@@ -329,6 +330,33 @@
      <div class="pn-resultado" id="pn-aop-resultado"><span class="pn-vazio">As linhas [AUDITORIA] geradas aparecem aqui e no console.</span></div>`,
     ['auditoria/Auditado.java', 'auditoria/AuditoriaAspect.java', 'OwnerController / VisitController / VetController (só a anotação)']));
 
+  // ---------- Relatórios (tópico 4.4): JasperReports ----------
+
+  const DIAGRAMA_RELATORIO = `flowchart LR
+  J[".jrxml<br/>(layout do iReport /<br/>Jaspersoft Studio)"] -- "1. compilar<br/>(uma vez)" --> R["JasperReport"]
+  D[("Pets do banco +<br/>preço do Strategy")] -- "JRBeanCollectionDataSource" --> F
+  R --> F["2. preencher<br/>JasperPrint"]
+  F -- "3. exportar" --> P["PDF"]`;
+
+  cartoes.insertAdjacentHTML('beforeend', cartao('ext6', 6, 'Relatórios', 'iReport', 'Jaspersoft Studio + JasperReports 7',
+    'O JasperReports continua sendo o motor de relatórios mais usado no mundo Java. O que mudou foi o editor: o iReport foi ' +
+    'substituído pelo Jaspersoft Studio, e a versão 7 trouxe um formato <code>.jrxml</code> mais simples. O layout fica separado ' +
+    'dos dados: o relatório não sabe calcular preço, só recebe as linhas prontas do <code>PrecoConsultaService</code> (Strategy).',
+    diagrama('Compilar → preencher → exportar', DIAGRAMA_RELATORIO) + `
+      <h3 class="mt-3">As partes do .jrxml</h3>
+      <pre class="pn-codigo"><span class="k">&lt;parameter&gt;</span> GERADO_EM, BANCO      <span class="c">// vêm do Java</span>
+<span class="k">&lt;field&gt;</span>     pet, tipo, preco...   <span class="c">// getters de LinhaRelatorio</span>
+<span class="k">&lt;variable&gt;</span>  TOTAL_PRECO = Sum      <span class="c">// calculada pelo Jasper</span>
+<span class="k">&lt;group&gt;</span>     porTipo                <span class="c">// cabeçalho e subtotal por tipo</span>
+<span class="t">bandas</span>      title, columnHeader, detail, summary, pageFooter</pre>`,
+    `<h3>Demo ao vivo: gerar o PDF com os dados do banco</h3>
+     <div class="pn-acoes">
+       <button class="btn btn-primary btn-sm" id="pn-relatorio">Gerar relatório PDF</button>
+       <a class="btn btn-outline-secondary btn-sm" href="/relatorios/pets-e-precos.pdf" target="_blank" rel="noopener">abrir em outra aba</a>
+     </div>
+     <div class="pn-resultado" id="pn-relatorio-resultado"><span class="pn-vazio">O método do controller tem <code>@Auditado</code>: o tempo de geração aparece no console.</span></div>`,
+    ['src/main/resources/relatorios/pets-e-precos.jrxml', 'relatorio/RelatorioService.java', 'relatorio/LinhaRelatorio.java', 'relatorio/RelatorioController.java']));
+
   // ---------- Galeria UML (item 7.3), com os diagramas de docs/uml/svg ----------
 
   const DIAGRAMAS_UML = [
@@ -340,14 +368,15 @@
     ['06_classes_observer', 'Classes: Observer', 'projeto'],
     ['07_classes_aop', 'Classes: Spring AOP', 'projeto'],
     ['08_sequencia_grpc', 'Sequência: gRPC', 'comportamento'],
-    ['09_implantacao_execucao_local', 'Implantação', 'implantação'],
-    ['10_atividade_cadastro_pet', 'Atividade: cadastro de pet', 'comportamento']
+    ['09_implantacao_execucao_local', 'Implantação: execução local', 'implantação'],
+    ['10_atividade_cadastro_pet', 'Atividade: cadastro de pet', 'comportamento'],
+    ['11_implantacao_producao_render_neon', 'Implantação: Render + Neon', 'implantação']
   ];
 
   cartoes.insertAdjacentHTML('beforeend', `
     <section class="pn-card" id="uml">
       <h2><span class="pn-num">U</span> Documentação UML <span class="pn-tag">item 7.3 do plano</span></h2>
-      <p class="pn-porque">Dez diagramas cobrindo requisitos, análise, arquitetura, projeto, comportamento e implantação.
+      <p class="pn-porque">Onze diagramas cobrindo requisitos, análise, arquitetura, projeto, comportamento e implantação.
         Clique para abrir em tamanho real. As fontes PlantUML estão em <code>docs/uml/puml</code>.</p>
       <div class="pn-uml">
         ${DIAGRAMAS_UML.map(([arquivo, titulo, fase]) => `
@@ -619,6 +648,39 @@
         }
       }, 2500);
     });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Relatório PDF
+  // ---------------------------------------------------------------------------
+
+  document.getElementById('pn-relatorio').addEventListener('click', async (evento) => {
+    const botao = evento.currentTarget;
+    const alvo = document.getElementById('pn-relatorio-resultado');
+    botao.disabled = true;
+    alvo.innerHTML = '<span class="pn-vazio">gerando... (a primeira vez compila o .jrxml)</span>';
+    const inicio = performance.now();
+    try {
+      const resposta = await fetch('/relatorios/pets-e-precos.pdf');
+      if (!resposta.ok) {
+        throw new Error('HTTP ' + resposta.status);
+      }
+      const pdf = await resposta.blob();
+      const ms = Math.round(performance.now() - inicio);
+      const url = URL.createObjectURL(pdf);
+      alvo.innerHTML = `
+        <div class="pn-metricas">
+          <div class="pn-metrica"><span class="valor">${ms} ms</span><span class="rotulo">compilar + preencher + exportar</span></div>
+          <div class="pn-metrica"><span class="valor">${(pdf.size / 1024).toFixed(0)} KB</span><span class="rotulo">PDF gerado</span></div>
+        </div>
+        <iframe class="pn-pdf" src="${url}" title="Relatório PDF"></iframe>`;
+    }
+    catch (e) {
+      erro(alvo, e);
+    }
+    finally {
+      botao.disabled = false;
+    }
   });
 
   // ---------------------------------------------------------------------------
