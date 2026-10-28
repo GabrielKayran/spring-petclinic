@@ -9,7 +9,7 @@ participant "VisitController" as VC
 participant "OwnerRepository" as Repo
 database "H2 (via JPA)" as DB
 participant "ApplicationEventPublisher" as Pub
-participant "LembreteVisitaListener" as Listener
+participant "VisitReminderListener" as Listener
 U -> MVC : POST /owners/{ownerId}/pets/{petId}/visits/new
 MVC -> AOP : processNewVisitForm(...)
 AOP -> VC : proceed()
@@ -20,7 +20,7 @@ alt dados válidos
   Repo -> DB : persistir (JPA/Hibernate)
   DB --> Repo : confirmação
   Repo --> VC : retorna
-  VC -> Pub : publishEvent(VisitaRegistradaEvent)
+  VC -> Pub : publishEvent(VisitRegisteredEvent)
   Pub ->> Listener : @EventListener + @Async
   activate Listener
   VC --> AOP : redirect:/owners/{ownerId}

@@ -19,29 +19,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Extensão 2: mostra qual thread atendeu a requisição HTTP.
- * <p>
- * Com {@code spring.threads.virtual.enabled=true} no application.properties, o Tomcat
- * passa a criar uma virtual thread por requisição em vez de usar o pool de threads de
- * plataforma (que por padrão tem 200 threads). Abra {@code /thread} no navegador e
- * confira o campo {@code virtual}.
+ * Shows which thread served the request. With {@code spring.threads.virtual.enabled=true}
+ * Tomcat serves every request on a virtual thread.
  */
 @RestController
 class ThreadInfoController {
 
 	@GetMapping("/thread")
-	ThreadInfo threadAtual() {
-		Thread atual = Thread.currentThread();
-		return new ThreadInfo(atual.getName(), atual.isVirtual(), atual.isVirtual() ? "virtual" : "plataforma",
-				atual.toString());
+	ThreadInfo currentThread() {
+		Thread current = Thread.currentThread();
+		return new ThreadInfo(current.getName(), current.isVirtual(), current.isVirtual() ? "virtual" : "plataforma",
+				current.toString());
 	}
 
 	/**
-	 * Resposta convertida em JSON. O campo {@code detalhes} usa o toString() da thread.
-	 * Numa virtual thread ele mostra também a carrier thread, ou seja, a thread do SO
-	 * (ForkJoinPool) em que ela está montada naquele momento.
+	 * {@code details} holds {@link Thread#toString()}, which names the carrier thread.
 	 */
-	record ThreadInfo(String nome, boolean virtual, String tipo, String detalhes) {
+	record ThreadInfo(String name, boolean virtual, String type, String details) {
 	}
 
 }

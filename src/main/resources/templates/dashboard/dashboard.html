@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'painel')}">
+
+<body>
+
+  <!-- Rendered by /resources/js/dashboard.js -->
+  <link rel="stylesheet" th:href="@{/resources/css/dashboard.css(v=${version})}" />
+  <div id="dashboard"></div>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+  <script th:src="@{/resources/js/dashboard.js(v=${version})}"></script>
+
+</body>
+
+</html>

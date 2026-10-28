@@ -1,26 +1,24 @@
-# Blueprint do Render: Dashboard > New > Blueprint > escolha este repositório.
-# As credenciais do banco (Neon) NÃO ficam aqui: "sync: false" faz o Render pedir os valores
-# no painel durante a criação, e eles ficam guardados só lá.
+# Render Blueprint. Database credentials are not stored here: "sync: false" makes Render
+# ask for them in the dashboard.
 services:
   - type: web
     name: petclinic-poo2
     runtime: docker
     plan: free
-    # Virginia (EUA leste) é a região do Render mais próxima do Neon em São Paulo (sa-east-1)
+    # Closest Render region to Neon's sa-east-1
     region: virginia
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /actuator/health
+    healthCheckPath: /health
     envVars:
-      # Usa o application-postgres.properties (scripts de schema/dados idempotentes)
       - key: SPRING_PROFILES_ACTIVE
         value: postgres
-      # Formato: jdbc:postgresql://HOST/neondb?sslmode=require&channelBinding=require
+      # jdbc:postgresql://HOST/neondb?sslmode=require&channelBinding=require
       - key: POSTGRES_URL
         sync: false
       - key: POSTGRES_USER
         sync: false
       - key: POSTGRES_PASS
         sync: false
-      # Em produção não expomos /actuator/env, /actuator/heapdump etc. (o heapdump revelaria a senha do banco)
+      # Do not expose /actuator/env, /actuator/heapdump, etc. in production
       - key: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
         value: health,info

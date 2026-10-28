@@ -3,26 +3,26 @@ skinparam backgroundColor white
 skinparam shadowing false
 actor "Usuário" as U
 participant "Navegador /painel" as UI
-participant "PainelController :8080" as Panel
-participant "GrpcDemoCliente" as GClient
+participant "DashboardController :8080" as Panel
+participant "GrpcDemoClient" as GClient
 participant "Stub / Canal gRPC :9090" as Channel
-participant "VeterinarioGrpcService" as GServer
+participant "VetGrpcService" as GServer
 participant "VetRepository" as Repo
 database "H2 / cache" as H2
-U -> UI : clica em ListarVeterinarios
-UI -> Panel : GET /api/painel/grpc (HTTP)
-Panel -> GClient : listarVeterinarios()
-GClient -> Channel : newBlockingStub(...).listarVeterinarios()
-Channel -> GServer : ListarVeterinariosRequest (HTTP/2, Protobuf)
+U -> UI : clica em ListVets
+UI -> Panel : GET /api/dashboard/grpc (HTTP)
+Panel -> GClient : listVets()
+GClient -> Channel : newBlockingStub(...).listVets()
+Channel -> GServer : ListVetsRequest (HTTP/2, Protobuf)
 GServer -> Repo : findAll()
 Repo -> H2 : consulta (ou cache)
 H2 --> Repo : veterinários
 Repo --> GServer : Collection<Vet>
-GServer -> GServer : converter Vet → Veterinario Protobuf
-GServer --> Channel : ListarVeterinariosResponse
+GServer -> GServer : converter Vet → VetInfo Protobuf
+GServer --> Channel : ListVetsResponse
 Channel --> GClient : mensagem Protobuf
 GClient -> GClient : medir duração, bytes Protobuf/JSON
-GClient --> Panel : ResultadoGrpc
+GClient --> Panel : GrpcResult
 Panel --> UI : JSON de apresentação
 UI --> U : tabela e métricas
 note bottom of GClient

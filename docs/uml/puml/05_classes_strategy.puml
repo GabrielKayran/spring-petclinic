@@ -2,37 +2,37 @@
 skinparam backgroundColor white
 skinparam classAttributeIconSize 0
 skinparam shadowing false
-interface PrecoConsultaStrategy {
- + calcularPreco(pet: Pet): BigDecimal
+interface VisitPriceStrategy {
+ + calculatePrice(pet: Pet): BigDecimal
 }
-class PrecoConsultaCao <<@Component("dog")>> {
-  + calcularPreco(pet): BigDecimal
+class DogPriceStrategy <<@Component("dog")>> {
+  + calculatePrice(pet): BigDecimal
 }
-class PrecoConsultaGato <<@Component("cat")>> {
-  + calcularPreco(pet): BigDecimal
+class CatPriceStrategy <<@Component("cat")>> {
+  + calculatePrice(pet): BigDecimal
 }
-class PrecoConsultaPadrao <<@Component("padrao")>> {
-  + calcularPreco(pet): BigDecimal
+class DefaultPriceStrategy <<@Component("padrao")>> {
+  + calculatePrice(pet): BigDecimal
 }
-class PrecoConsultaService <<@Service>> {
- - estrategiasPorTipo: Map<String, PrecoConsultaStrategy>
- - estrategiaPadrao: PrecoConsultaStrategy
- + estrategiaPara(pet): PrecoConsultaStrategy
- + calcularPreco(pet): BigDecimal
+class VisitPriceService <<@Service>> {
+ - strategiesByType: Map<String, VisitPriceStrategy>
+ - defaultStrategy: VisitPriceStrategy
+ + strategyFor(pet): VisitPriceStrategy
+ + calculatePrice(pet): BigDecimal
 }
-class PrecoConsultaWebConfiguration <<HandlerInterceptor>> {
+class VisitPriceWebConfiguration <<HandlerInterceptor>> {
  + postHandle(...): void
 }
 class Pet <<Entity>>
-PrecoConsultaStrategy <|.. PrecoConsultaCao
-PrecoConsultaStrategy <|.. PrecoConsultaGato
-PrecoConsultaStrategy <|.. PrecoConsultaPadrao
-PrecoConsultaService o--> "*" PrecoConsultaStrategy : injeção pelo Spring
-PrecoConsultaWebConfiguration ..> PrecoConsultaService : usa
-PrecoConsultaStrategy ..> Pet : argumento
-note right of PrecoConsultaService
+VisitPriceStrategy <|.. DogPriceStrategy
+VisitPriceStrategy <|.. CatPriceStrategy
+VisitPriceStrategy <|.. DefaultPriceStrategy
+VisitPriceService o--> "*" VisitPriceStrategy : injeção pelo Spring
+VisitPriceWebConfiguration ..> VisitPriceService : usa
+VisitPriceStrategy ..> Pet : argumento
+note right of VisitPriceService
   Map: dog / cat / padrao
-  getOrDefault(tipo, estrategiaPadrao)
+  getOrDefault(tipo, defaultStrategy)
 end note
 note bottom of Pet
   Valor apenas exibido na tela;

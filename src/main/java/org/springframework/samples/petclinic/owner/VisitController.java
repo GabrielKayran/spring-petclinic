@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.samples.petclinic.auditoria.Auditado;
-import org.springframework.samples.petclinic.lembrete.VisitaRegistradaEvent;
+import org.springframework.samples.petclinic.audit.Audited;
+import org.springframework.samples.petclinic.reminder.VisitRegisteredEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -47,11 +47,11 @@ class VisitController {
 
 	private final OwnerRepository owners;
 
-	private final ApplicationEventPublisher eventos;
+	private final ApplicationEventPublisher events;
 
-	public VisitController(OwnerRepository owners, ApplicationEventPublisher eventos) {
+	public VisitController(OwnerRepository owners, ApplicationEventPublisher events) {
 		this.owners = owners;
-		this.eventos = eventos;
+		this.events = events;
 	}
 
 	@InitBinder
@@ -100,7 +100,7 @@ class VisitController {
 
 	// Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is
 	// called
-	@Auditado("Registrar visita")
+	@Audited("Registrar visita")
 	@PostMapping("/owners/{ownerId}/pets/{petId}/visits/new")
 	public String processNewVisitForm(@ModelAttribute Owner owner, @PathVariable int petId, @Valid Visit visit,
 			BindingResult result, RedirectAttributes redirectAttributes) {
@@ -115,9 +115,7 @@ class VisitController {
 		owner.addVisit(petId, visit);
 		this.owners.save(owner);
 
-		// Extensão 3 (Observer): avisa os interessados que uma visita foi registrada.
-		// O controller não conhece quem vai reagir ao evento, só o publica.
-		this.eventos.publishEvent(new VisitaRegistradaEvent(this, owner.getFirstName() + " " + owner.getLastName(),
+		this.events.publishEvent(new VisitRegisteredEvent(this, owner.getFirstName() + " " + owner.getLastName(),
 				owner.getPet(petId).getName(), visit.getDate(), visit.getDescription()));
 
 		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");

@@ -53,8 +53,8 @@
 <polygon fill="#ffffff" stroke="transparent" points="512,-160 512,-234 731,-234 731,-160 512,-160"/>
 <polygon fill="#eaf3f8" stroke="transparent" points="513.5,-188 513.5,-233 730.5,-233 730.5,-188 513.5,-188"/>
 <text text-anchor="start" x="567" y="-216" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#3a718e">&lt;&lt;interface&gt;&gt;</text>
-<text text-anchor="start" x="523.5" y="-202" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">PrecoConsultaStrategy</text>
-<text text-anchor="start" x="521.5" y="-172" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calcularPreco(pet): BigDecimal</text>
+<text text-anchor="start" x="523.5" y="-202" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">VisitPriceStrategy</text>
+<text text-anchor="start" x="521.5" y="-172" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calculatePrice(pet): BigDecimal</text>
 <polygon fill="none" stroke="#bbd1cc" points="512,-160 512,-234 731,-234 731,-160 512,-160"/>
 </g>
 <!-- Service -->
@@ -63,11 +63,11 @@
 <polygon fill="#ffffff" stroke="transparent" points="0,-309 0,-432 355,-432 355,-309 0,-309"/>
 <polygon fill="#e8f6ef" stroke="transparent" points="1.5,-385.5 1.5,-430.5 354.5,-430.5 354.5,-385.5 1.5,-385.5"/>
 <text text-anchor="start" x="138.5" y="-413.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#176749">&lt;&lt;@Service&gt;&gt;</text>
-<text text-anchor="start" x="84.5" y="-399.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">PrecoConsultaService</text>
-<text text-anchor="start" x="9.5" y="-369.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; estrategiasPorTipo: Map&lt;String, PrecoConsultaStrategy&gt;</text>
-<text text-anchor="start" x="54.5" y="-358.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; estrategiaPadrao: PrecoConsultaStrategy</text>
-<text text-anchor="start" x="9.5" y="-331.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ estrategiaPara(pet): PrecoConsultaStrategy</text>
-<text text-anchor="start" x="45.5" y="-320.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calcularPreco(pet): BigDecimal</text>
+<text text-anchor="start" x="84.5" y="-399.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">VisitPriceService</text>
+<text text-anchor="start" x="9.5" y="-369.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; strategiesByType: Map&lt;String, VisitPriceStrategy&gt;</text>
+<text text-anchor="start" x="54.5" y="-358.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; defaultStrategy: VisitPriceStrategy</text>
+<text text-anchor="start" x="9.5" y="-331.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ strategyFor(pet): VisitPriceStrategy</text>
+<text text-anchor="start" x="45.5" y="-320.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calculatePrice(pet): BigDecimal</text>
 <polygon fill="none" stroke="#bbd1cc" points="0,-309 0,-432 355,-432 355,-309 0,-309"/>
 </g>
 <!-- Dog -->
@@ -76,8 +76,8 @@
 <polygon fill="#ffffff" stroke="transparent" points="392,-333.5 392,-407.5 603,-407.5 603,-333.5 392,-333.5"/>
 <polygon fill="#e8f6ef" stroke="transparent" points="393.5,-361.5 393.5,-406.5 602.5,-406.5 602.5,-361.5 393.5,-361.5"/>
 <text text-anchor="start" x="431" y="-389.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#176749">&lt;&lt;@Component(&quot;dog&quot;)&gt;&gt;</text>
-<text text-anchor="start" x="420.5" y="-375.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">PrecoConsultaCao</text>
-<text text-anchor="start" x="401.5" y="-345.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calcularPreco(pet): BigDecimal</text>
+<text text-anchor="start" x="420.5" y="-375.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">DogPriceStrategy</text>
+<text text-anchor="start" x="401.5" y="-345.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calculatePrice(pet): BigDecimal</text>
 <polygon fill="none" stroke="#bbd1cc" points="392,-333.5 392,-407.5 603,-407.5 603,-333.5 392,-333.5"/>
 </g>
 <!-- Cat -->
@@ -86,8 +86,8 @@
 <polygon fill="#ffffff" stroke="transparent" points="640,-333.5 640,-407.5 851,-407.5 851,-333.5 640,-333.5"/>
 <polygon fill="#e8f6ef" stroke="transparent" points="641.5,-361.5 641.5,-406.5 850.5,-406.5 850.5,-361.5 641.5,-361.5"/>
 <text text-anchor="start" x="680.5" y="-389.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#176749">&lt;&lt;@Component(&quot;cat&quot;)&gt;&gt;</text>
-<text text-anchor="start" x="664.5" y="-375.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">PrecoConsultaGato</text>
-<text text-anchor="start" x="649.5" y="-345.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calcularPreco(pet): BigDecimal</text>
+<text text-anchor="start" x="664.5" y="-375.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">CatPriceStrategy</text>
+<text text-anchor="start" x="649.5" y="-345.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calculatePrice(pet): BigDecimal</text>
 <polygon fill="none" stroke="#bbd1cc" points="640,-333.5 640,-407.5 851,-407.5 851,-333.5 640,-333.5"/>
 </g>
 <!-- Default -->
@@ -96,8 +96,8 @@
 <polygon fill="#ffffff" stroke="transparent" points="888,-333.5 888,-407.5 1099,-407.5 1099,-333.5 888,-333.5"/>
 <polygon fill="#e8f6ef" stroke="transparent" points="889.5,-361.5 889.5,-406.5 1098.5,-406.5 1098.5,-361.5 889.5,-361.5"/>
 <text text-anchor="start" x="919" y="-389.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#176749">&lt;&lt;@Component(&quot;padrao&quot;)&gt;&gt;</text>
-<text text-anchor="start" x="903" y="-375.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">PrecoConsultaPadrao</text>
-<text text-anchor="start" x="897.5" y="-345.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calcularPreco(pet): BigDecimal</text>
+<text text-anchor="start" x="903" y="-375.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">DefaultPriceStrategy</text>
+<text text-anchor="start" x="897.5" y="-345.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ calculatePrice(pet): BigDecimal</text>
 <polygon fill="none" stroke="#bbd1cc" points="888,-333.5 888,-407.5 1099,-407.5 1099,-333.5 888,-333.5"/>
 </g>
 <!-- WebConfig -->
@@ -106,7 +106,7 @@
 <polygon fill="#ffffff" stroke="transparent" points="28.5,-507 28.5,-581 326.5,-581 326.5,-507 28.5,-507"/>
 <polygon fill="#fff4e4" stroke="transparent" points="29.5,-535 29.5,-580 325.5,-580 325.5,-535 29.5,-535"/>
 <text text-anchor="start" x="98.5" y="-563" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#af7932">&lt;&lt;HandlerInterceptor&gt;&gt;</text>
-<text text-anchor="start" x="39.5" y="-549" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">PrecoConsultaWebConfiguration</text>
+<text text-anchor="start" x="39.5" y="-549" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">VisitPriceWebConfiguration</text>
 <text text-anchor="start" x="37.5" y="-519" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ postHandle(...): void</text>
 <polygon fill="none" stroke="#bbd1cc" points="28.5,-507 28.5,-581 326.5,-581 326.5,-507 28.5,-507"/>
 </g>

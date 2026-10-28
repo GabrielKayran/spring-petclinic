@@ -1,11 +1,11 @@
 @startuml
 skinparam backgroundColor white
 skinparam shadowing false
-annotation Auditado {
+annotation Audited {
  + value(): String
 }
-class AuditoriaAspect <<@Aspect, @Component>> {
- + auditar(joinPoint, auditado): Object
+class AuditAspect <<@Aspect, @Component>> {
+ + audit(joinPoint, audited): Object
 }
 class OwnerController <<@Controller>> {
   + showOwner(ownerId): ModelAndView
@@ -17,11 +17,11 @@ class VisitController <<@Controller>> {
   + processNewVisitForm(...): String
 }
 class "Proxy CGLIB (runtime)" as Proxy <<gerado pelo Spring>>
-AuditoriaAspect ..> Auditado : @Around / pointcut
-OwnerController ..> Auditado : @Auditado
-VetController ..> Auditado : @Auditado
-VisitController ..> Auditado : @Auditado
-Proxy ..> AuditoriaAspect : executa advice
+AuditAspect ..> Audited : @Around / pointcut
+OwnerController ..> Audited : @Audited
+VetController ..> Audited : @Audited
+VisitController ..> Audited : @Audited
+Proxy ..> AuditAspect : executa advice
 Proxy ..> OwnerController : delega
 Proxy ..> VetController : delega
 Proxy ..> VisitController : delega

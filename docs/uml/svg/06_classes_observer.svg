@@ -57,7 +57,7 @@
 <text text-anchor="start" x="178.5" y="-545" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#176749">&lt;&lt;@Controller&gt;&gt;</text>
 <text text-anchor="start" x="161.5" y="-531" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">VisitController</text>
 <text text-anchor="start" x="115.5" y="-501" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; owners: OwnerRepository</text>
-<text text-anchor="start" x="115.5" y="-490" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; eventos: ApplicationEventPublisher</text>
+<text text-anchor="start" x="115.5" y="-490" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; events: ApplicationEventPublisher</text>
 <text text-anchor="start" x="115.5" y="-463" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ processNewVisitForm(...): String</text>
 <polygon fill="none" stroke="#bbd1cc" points="106,-451 106,-563 341,-563 341,-451 106,-451"/>
 </g>
@@ -87,11 +87,11 @@
 <polygon fill="#ffffff" stroke="transparent" points="391,-102 391,-209 602,-209 602,-102 391,-102"/>
 <polygon fill="#e8f6ef" stroke="transparent" points="392.5,-162.5 392.5,-207.5 601.5,-207.5 601.5,-162.5 392.5,-162.5"/>
 <text text-anchor="start" x="418" y="-190.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#176749">&lt;&lt;extends ApplicationEvent&gt;&gt;</text>
-<text text-anchor="start" x="402.5" y="-176.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">VisitaRegistradaEvent</text>
-<text text-anchor="start" x="400.5" y="-146.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; nomeDono: String</text>
-<text text-anchor="start" x="400.5" y="-135.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; nomePet: String</text>
-<text text-anchor="start" x="400.5" y="-124.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; dataVisita: LocalDate</text>
-<text text-anchor="start" x="412.5" y="-113.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; descricao: String</text>
+<text text-anchor="start" x="402.5" y="-176.5" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">VisitRegisteredEvent</text>
+<text text-anchor="start" x="400.5" y="-146.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; ownerName: String</text>
+<text text-anchor="start" x="400.5" y="-135.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; petName: String</text>
+<text text-anchor="start" x="400.5" y="-124.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; visitDate: LocalDate</text>
+<text text-anchor="start" x="412.5" y="-113.5" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">&#45; description: String</text>
 <polygon fill="none" stroke="#bbd1cc" points="391,-102 391,-209 602,-209 602,-102 391,-102"/>
 </g>
 <!-- L -->
@@ -100,10 +100,10 @@
 <polygon fill="#ffffff" stroke="transparent" points="520.5,-274 520.5,-386 744.5,-386 744.5,-274 520.5,-274"/>
 <polygon fill="#e8f6ef" stroke="transparent" points="521.5,-340 521.5,-385 743.5,-385 743.5,-340 521.5,-340"/>
 <text text-anchor="start" x="582.5" y="-368" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#176749">&lt;&lt;@Component&gt;&gt;</text>
-<text text-anchor="start" x="531.5" y="-354" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">LembreteVisitaListener</text>
+<text text-anchor="start" x="531.5" y="-354" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">VisitReminderListener</text>
 <text text-anchor="start" x="529.5" y="-324" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">@Async</text>
 <text text-anchor="start" x="529.5" y="-313" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">@EventListener</text>
-<text text-anchor="start" x="529.5" y="-286" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ enviarLembrete(event): void</text>
+<text text-anchor="start" x="529.5" y="-286" font-family="DejaVu Sans Mono, Consolas, monospace" font-size="10.00" fill="#203943">+ sendReminder(event): void</text>
 <polygon fill="none" stroke="#bbd1cc" points="520.5,-274 520.5,-386 744.5,-386 744.5,-274 520.5,-274"/>
 </g>
 <!-- CONF -->
@@ -112,7 +112,7 @@
 <polygon fill="#ffffff" stroke="transparent" points="497.5,-483.5 497.5,-530.5 767.5,-530.5 767.5,-483.5 497.5,-483.5"/>
 <polygon fill="#fff4e4" stroke="transparent" points="498.5,-484 498.5,-529 766.5,-529 766.5,-484 498.5,-484"/>
 <text text-anchor="start" x="579.5" y="-512" font-family="DejaVu Sans, Verdana, sans-serif" font-size="10.00" fill="#af7932">&lt;&lt;@EnableAsync&gt;&gt;</text>
-<text text-anchor="start" x="508.5" y="-498" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">LembreteAsyncConfiguration</text>
+<text text-anchor="start" x="508.5" y="-498" font-family="DejaVu Sans, Verdana, sans-serif" font-weight="bold" font-size="15.00" fill="#162c35">AsyncConfiguration</text>
 <polygon fill="none" stroke="#bbd1cc" points="497.5,-483.5 497.5,-530.5 767.5,-530.5 767.5,-483.5 497.5,-483.5"/>
 </g>
 <!-- AppEvent -->

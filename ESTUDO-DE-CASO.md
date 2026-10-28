@@ -8,11 +8,11 @@ Em cada uma mostramos a **tecnologia clássica** ensinada na disciplina e o seu 
 |---|----------|----------------|--------|
 | 1 | RMI (clássico) → gRPC (moderno) | `demos/rmi`, `...petclinic.grpc` | `extensao/1-rmi-grpc` |
 | 2 | Threads de plataforma → Virtual Threads | `demos/threads`, `...petclinic.virtualthreads` | `extensao/2-virtual-threads` |
-| 3 | Padrão Observer + processamento assíncrono | `...petclinic.lembrete` | `extensao/3-observer-async` |
-| 4 | Padrão Strategy | `...petclinic.preco` | `extensao/4-strategy` |
-| 5 | AOP próprio (`@Auditado`) | `...petclinic.auditoria` | `extensao/5-aop-auditoria` |
-| + | **Painel `/painel`** (vitrine ao vivo das 5) + deploy no Render | `...petclinic.painel`, `Dockerfile`, `render.yaml` | `extensao/6-painel-render` |
-| + | **Relatórios PDF** com JasperReports (tópico 4.4 do plano) | `...petclinic.relatorio`, `relatorios/pets-e-precos.jrxml` | `main` |
+| 3 | Padrão Observer + processamento assíncrono | `...petclinic.reminder` | `extensao/3-observer-async` |
+| 4 | Padrão Strategy | `...petclinic.pricing` | `extensao/4-strategy` |
+| 5 | AOP próprio (`@Audited`) | `...petclinic.audit` | `extensao/5-aop-auditoria` |
+| + | **Painel `/painel`** (vitrine ao vivo das 5) + deploy no Render | `...petclinic.dashboard`, `Dockerfile`, `render.yaml` | `extensao/6-painel-render` |
+| + | **Relatórios PDF** com JasperReports (tópico 4.4 do plano) | `...petclinic.report`, `reports/pets-and-prices.jrxml` | `main` |
 
 As branches 1 a 5 saem do mesmo commit base (atualização para Java 21) e não dependem umas
 das outras. O painel depende de todas, porque só exibe o que elas fazem. A branch `estudo-de-caso` juntou tudo e foi mesclada na `main`, que é a branch usada no deploy.
@@ -79,24 +79,24 @@ flowchart LR
     end
 
     subgraph ext1["Extensão 1"]
-        grpc["grpc<br/>VeterinarioGrpcService"]
+        grpc["grpc<br/>VetGrpcService"]
         grpcproto["grpc.proto<br/>(código gerado do .proto)"]
-        grpccli["grpc.cliente<br/>ClienteGrpc"]
+        grpccli["grpc.cliente<br/>GrpcClient"]
     end
     subgraph ext2["Extensão 2"]
         vt["virtualthreads<br/>ThreadInfoController"]
     end
     subgraph ext3["Extensão 3"]
-        lembrete["lembrete<br/>VisitaRegistradaEvent<br/>LembreteVisitaListener"]
+        lembrete["lembrete<br/>VisitRegisteredEvent<br/>VisitReminderListener"]
     end
     subgraph ext4["Extensão 4"]
-        preco["preco<br/>PrecoConsultaStrategy<br/>PrecoConsultaService"]
+        preco["preco<br/>VisitPriceStrategy<br/>VisitPriceService"]
     end
     subgraph ext5["Extensão 5"]
-        auditoria["auditoria<br/>@Auditado<br/>AuditoriaAspect"]
+        auditoria["auditoria<br/>@Audited<br/>AuditAspect"]
     end
     subgraph vitrine["Painel (apresentação)"]
-        painel["painel<br/>PainelController<br/>GrpcDemoCliente<br/>BenchmarkDemo<br/>PainelLogAppender"]
+        painel["painel<br/>DashboardController<br/>GrpcDemoClient<br/>BenchmarkDemo<br/>DashboardLogAppender"]
     end
 
     painel -.-> grpcproto
@@ -110,8 +110,8 @@ flowchart LR
     grpccli --> grpcproto
     owner -- "publica evento" --> lembrete
     preco --> owner
-    owner -- "@Auditado" --> auditoria
-    vet -- "@Auditado" --> auditoria
+    owner -- "@Audited" --> auditoria
+    vet -- "@Audited" --> auditoria
     vet --> model
     owner --> model
 
@@ -122,8 +122,8 @@ flowchart LR
 Pontos de contato com o código original. Nenhuma lógica de negócio existente foi alterada:
 
 - `VisitController`: recebeu o `ApplicationEventPublisher` e uma chamada `publishEvent(...)` (Extensão 3),
-  além de `@Auditado` em um método (Extensão 5).
-- `OwnerController.showOwner` e `VetController.showResourcesVetList`: apenas `@Auditado` (Extensão 5).
+  além de `@Audited` em um método (Extensão 5).
+- `OwnerController.showOwner` e `VetController.showResourcesVetList`: apenas `@Audited` (Extensão 5).
 - `createOrUpdateVisitForm.html` + `messages*.properties`: exibição do preço (Extensão 4).
 - `application.properties`: `spring.threads.virtual.enabled=true` (Extensão 2) e `server.port=${PORT:8080}` (Render).
 - `fragments/layout.html`: item "Estudo de caso" no menu, que leva ao `/painel`.
@@ -136,10 +136,10 @@ Pontos de contato com o código original. Nenhuma lógica de negócio existente 
 **Clássico** (`demos/rmi`, 57 linhas, sem Spring e sem Maven): uma interface remota Java,
 um servidor que publica o stub no RMI Registry e um cliente que procura o stub pelo nome.
 
-**Moderno**: o contrato fica em `src/main/protobuf/veterinarios.proto`. No build, o Maven gera
-as classes Java (`protobuf-maven-plugin`). `VeterinarioGrpcService` implementa o serviço reaproveitando o
+**Moderno**: o contrato fica em `src/main/protobuf/vets.proto`. No build, o Maven gera
+as classes Java (`protobuf-maven-plugin`). `VetGrpcService` implementa o serviço reaproveitando o
 `VetRepository` existente. O Spring Boot 4.1 sobe o servidor gRPC (Netty) na porta **9090**.
-`ClienteGrpc` é um programa separado, sem Spring, que chama o serviço pelo stub gerado.
+`GrpcClient` é um programa separado, sem Spring, que chama o serviço pelo stub gerado.
 
 ```mermaid
 classDiagram
@@ -148,62 +148,62 @@ classDiagram
         class Remote {
             <<interface>>
         }
-        class VeterinarioService_RMI["VeterinarioService"] {
+        class VetService_RMI["VetService"] {
             <<interface>>
-            +listarVeterinarios() List~String~ throws RemoteException
+            +listVets() List~String~ throws RemoteException
         }
         class Servidor {
-            +listarVeterinarios() List~String~
+            +listVets() List~String~
             +main(String[])
         }
         class Cliente {
             +main(String[])
         }
     }
-    Remote <|-- VeterinarioService_RMI
-    VeterinarioService_RMI <|.. Servidor
-    Cliente ..> VeterinarioService_RMI : stub via Registry (porta 1099)
+    Remote <|-- VetService_RMI
+    VetService_RMI <|.. Servidor
+    Cliente ..> VetService_RMI : stub via Registry (porta 1099)
 ```
 
 ```mermaid
 classDiagram
     direction LR
-    class VeterinarioServiceImplBase {
+    class VetServiceImplBase {
         <<gerada a partir do .proto>>
-        +listarVeterinarios(request, responseObserver)
+        +listVets(request, responseObserver)
     }
-    class VeterinarioServiceBlockingStub {
+    class VetServiceBlockingStub {
         <<gerada a partir do .proto>>
-        +listarVeterinarios(request) ListarVeterinariosResponse
+        +listVets(request) ListVetsResponse
     }
-    class VeterinarioGrpcService {
+    class VetGrpcService {
         <<@Service>>
         -VetRepository vetRepository
-        +listarVeterinarios(request, responseObserver)
-        -paraMensagem(Vet) Veterinario
+        +listVets(request, responseObserver)
+        -toMessage(Vet) VetInfo
     }
-    class ClienteGrpc {
+    class GrpcClient {
         +main(String[])
     }
     class VetRepository {
         <<interface>>
         +findAll() Collection~Vet~
     }
-    class ListarVeterinariosResponse {
-        +List~Veterinario~ veterinarios
+    class ListVetsResponse {
+        +List~VetInfo~ vets
     }
-    class Veterinario {
+    class VetInfo {
         +int id
-        +String nome
-        +String sobrenome
-        +List~String~ especialidades
+        +String firstName
+        +String lastName
+        +List~String~ specialties
     }
-    VeterinarioServiceImplBase <|-- VeterinarioGrpcService
-    VeterinarioGrpcService --> VetRepository
-    VeterinarioGrpcService ..> ListarVeterinariosResponse : cria
-    ListarVeterinariosResponse o-- Veterinario
-    ClienteGrpc --> VeterinarioServiceBlockingStub
-    VeterinarioServiceBlockingStub ..> VeterinarioServiceImplBase : HTTP/2 + Protobuf (porta 9090)
+    VetServiceImplBase <|-- VetGrpcService
+    VetGrpcService --> VetRepository
+    VetGrpcService ..> ListVetsResponse : cria
+    ListVetsResponse o-- VetInfo
+    GrpcClient --> VetServiceBlockingStub
+    VetServiceBlockingStub ..> VetServiceImplBase : HTTP/2 + Protobuf (porta 9090)
 ```
 
 ---
@@ -223,21 +223,21 @@ classDiagram
     direction LR
     class BenchmarkThreads {
         +main(String[])
-        -medir(String nome, ExecutorService executor, int tarefas)
+        -measure(String label, ExecutorService executor, int tasks)
     }
     class ExecutorService {
         <<interface>>
     }
     class ThreadInfoController {
         <<@RestController>>
-        +threadAtual() ThreadInfo  «GET /thread»
+        +currentThread() ThreadInfo  «GET /thread»
     }
     class ThreadInfo {
         <<record>>
-        +String nome
+        +String name
         +boolean virtual
-        +String tipo
-        +String detalhes
+        +String type
+        +String details
     }
     BenchmarkThreads ..> ExecutorService : newFixedThreadPool(200)\nnewVirtualThreadPerTaskExecutor()
     ThreadInfoController ..> ThreadInfo : retorna (JSON)
@@ -247,8 +247,8 @@ classDiagram
 
 ## 4. Extensão 3: padrão Observer + `@Async`
 
-Quando uma visita é salva, o `VisitController` (o **sujeito**) publica um `VisitaRegistradaEvent`
-(a **notificação**). O `LembreteVisitaListener` (o **observador**) recebe o evento numa
+Quando uma visita é salva, o `VisitController` (o **sujeito**) publica um `VisitRegisteredEvent`
+(a **notificação**). O `VisitReminderListener` (o **observador**) recebe o evento numa
 **outra thread** (`@Async`) e simula o envio de um lembrete, que leva 2 s. A resposta HTTP não espera esse envio.
 
 ```mermaid
@@ -262,28 +262,28 @@ classDiagram
         <<interface, Spring>>
         +publishEvent(Object)
     }
-    class VisitaRegistradaEvent {
-        -String nomeDono
-        -String nomePet
-        -LocalDate dataVisita
-        -String descricao
+    class VisitRegisteredEvent {
+        -String ownerName
+        -String petName
+        -LocalDate visitDate
+        -String description
     }
     class VisitController {
         -OwnerRepository owners
-        -ApplicationEventPublisher eventos
+        -ApplicationEventPublisher events
         +processNewVisitForm(...) String
     }
-    class LembreteVisitaListener {
+    class VisitReminderListener {
         <<@Component>>
-        +enviarLembrete(VisitaRegistradaEvent) «@Async @EventListener»
+        +sendReminder(VisitRegisteredEvent) «@Async @EventListener»
     }
-    class LembreteAsyncConfiguration {
+    class AsyncConfiguration {
         <<@Configuration @EnableAsync>>
     }
-    ApplicationEvent <|-- VisitaRegistradaEvent
+    ApplicationEvent <|-- VisitRegisteredEvent
     VisitController --> ApplicationEventPublisher
-    VisitController ..> VisitaRegistradaEvent : cria e publica
-    LembreteVisitaListener ..> VisitaRegistradaEvent : observa
+    VisitController ..> VisitRegisteredEvent : cria e publica
+    VisitReminderListener ..> VisitRegisteredEvent : observa
 ```
 
 ### Diagrama de sequência: registrar visita → evento → lembrete assíncrono
@@ -293,12 +293,12 @@ sequenceDiagram
     autonumber
     actor Usuario as Usuário (navegador)
     participant Tomcat as Tomcat<br/>(virtual thread tomcat-handler-N)
-    participant Proxy as Proxy AOP<br/>(AuditoriaAspect)
+    participant Proxy as Proxy AOP<br/>(AuditAspect)
     participant VC as VisitController
     participant Repo as OwnerRepository
     participant Pub as ApplicationEventPublisher
     participant Exec as applicationTaskExecutor<br/>(virtual thread task-N)
-    participant L as LembreteVisitaListener
+    participant L as VisitReminderListener
 
     Usuario->>Tomcat: POST /owners/6/pets/7/visits/new
     Tomcat->>Proxy: processNewVisitForm(...)
@@ -306,8 +306,8 @@ sequenceDiagram
     Proxy->>VC: proceed()
     VC->>Repo: save(owner)
     Repo-->>VC: ok
-    VC->>Pub: publishEvent(VisitaRegistradaEvent)
-    Pub->>Exec: submete enviarLembrete(evento)
+    VC->>Pub: publishEvent(VisitRegisteredEvent)
+    Pub->>Exec: submete sendReminder(evento)
     Note right of Pub: @Async: retorna na hora,<br/>sem esperar o listener
     Pub-->>VC: retorno imediato
     VC-->>Proxy: "redirect:/owners/{ownerId}"
@@ -315,7 +315,7 @@ sequenceDiagram
     Proxy-->>Tomcat: view
     Tomcat-->>Usuario: 302 Redirect (cerca de 0,1 s)
     par em paralelo, em outra thread
-        Exec->>L: enviarLembrete(evento)
+        Exec->>L: sendReminder(evento)
         Note over L: loga "[Observer] preparando lembrete..."
         L->>L: Thread.sleep(2 s), simulando e-mail/SMS
         Note over L: loga "[Observer] lembrete enviado"
@@ -326,65 +326,65 @@ sequenceDiagram
 
 ## 5. Extensão 4: padrão Strategy
 
-`PrecoConsultaStrategy` define o algoritmo. Cada implementação é um bean cujo **nome é o tipo de
-pet** do banco (`"dog"`, `"cat"`), mais uma estratégia `"padrao"`. O `PrecoConsultaService` recebe
-um `Map<String, PrecoConsultaStrategy>` **injetado pelo Spring** com todas as estratégias e faz
-`getOrDefault(tipo, padrao)`, sem nenhum `if` ou `switch` sobre o tipo do pet. Para criar uma regra
+`VisitPriceStrategy` define o algoritmo. Cada implementação é um bean cujo **nome é o tipo de
+pet** do banco (`"dog"`, `"cat"`), mais uma estratégia `"default"`. O `VisitPriceService` recebe
+um `Map<String, VisitPriceStrategy>` **injetado pelo Spring** com todas as estratégias e faz
+`getOrDefault(type, defaultStrategy)`, sem nenhum `if` ou `switch` sobre o tipo do pet. Para criar uma regra
 para hamster, basta adicionar uma classe `@Component("hamster")`.
 
 | Estratégia | Bean | Regra |
 |---|---|---|
-| `PrecoConsultaCao` | `dog` | R$ 100,00 + R$ 5,00 por ano de idade |
-| `PrecoConsultaGato` | `cat` | R$ 90,00 |
-| `PrecoConsultaPadrao` | `padrao` | R$ 70,00 (lagarto, cobra, pássaro, hamster...) |
+| `DogPriceStrategy` | `dog` | R$ 100,00 + R$ 5,00 por ano de idade |
+| `CatPriceStrategy` | `cat` | R$ 90,00 |
+| `DefaultPriceStrategy` | `default` | R$ 70,00 (lagarto, cobra, pássaro, hamster...) |
 
-O preço aparece na tela de nova visita. O `PrecoConsultaWebConfiguration` (um `HandlerInterceptor`)
-adiciona `precoConsulta` ao model depois que o controller executa, sem alterar o `VisitController`.
+O preço aparece na tela de nova visita. O `VisitPriceWebConfiguration` (um `HandlerInterceptor`)
+adiciona `visitPrice` ao model depois que o controller executa, sem alterar o `VisitController`.
 
 ```mermaid
 classDiagram
     direction LR
-    class PrecoConsultaStrategy {
+    class VisitPriceStrategy {
         <<interface>>
-        +calcularPreco(Pet) BigDecimal
+        +calculatePrice(Pet) BigDecimal
     }
-    class PrecoConsultaCao {
+    class DogPriceStrategy {
         <<@Component("dog")>>
-        +calcularPreco(Pet) BigDecimal
+        +calculatePrice(Pet) BigDecimal
     }
-    class PrecoConsultaGato {
+    class CatPriceStrategy {
         <<@Component("cat")>>
-        +calcularPreco(Pet) BigDecimal
+        +calculatePrice(Pet) BigDecimal
     }
-    class PrecoConsultaPadrao {
-        <<@Component("padrao")>>
-        +calcularPreco(Pet) BigDecimal
+    class DefaultPriceStrategy {
+        <<@Component("default")>>
+        +calculatePrice(Pet) BigDecimal
     }
-    class PrecoConsultaService {
+    class VisitPriceService {
         <<@Service — contexto>>
-        -Map~String, PrecoConsultaStrategy~ estrategiasPorTipo
-        -PrecoConsultaStrategy estrategiaPadrao
-        +calcularPreco(Pet) BigDecimal
+        -Map~String, VisitPriceStrategy~ strategiesByType
+        -VisitPriceStrategy defaultStrategy
+        +calculatePrice(Pet) BigDecimal
     }
-    class PrecoConsultaWebConfiguration {
+    class VisitPriceWebConfiguration {
         <<WebMvcConfigurer, HandlerInterceptor>>
         +addInterceptors(InterceptorRegistry)
         +postHandle(..., ModelAndView)
     }
     class Pet
-    PrecoConsultaStrategy <|.. PrecoConsultaCao
-    PrecoConsultaStrategy <|.. PrecoConsultaGato
-    PrecoConsultaStrategy <|.. PrecoConsultaPadrao
-    PrecoConsultaService o-- "*" PrecoConsultaStrategy : injetadas pelo Spring
-    PrecoConsultaWebConfiguration --> PrecoConsultaService
-    PrecoConsultaStrategy ..> Pet
+    VisitPriceStrategy <|.. DogPriceStrategy
+    VisitPriceStrategy <|.. CatPriceStrategy
+    VisitPriceStrategy <|.. DefaultPriceStrategy
+    VisitPriceService o-- "*" VisitPriceStrategy : injetadas pelo Spring
+    VisitPriceWebConfiguration --> VisitPriceService
+    VisitPriceStrategy ..> Pet
 ```
 
 ---
 
-## 6. Extensão 5: AOP próprio (`@Auditado`)
+## 6. Extensão 5: AOP próprio (`@Audited`)
 
-`@Auditado` é só um marcador. O `AuditoriaAspect` usa o pointcut `@annotation(auditado)` e um advice
+`@Audited` é só um marcador. O `AuditAspect` usa o pointcut `@annotation(audited)` e um advice
 `@Around` para registrar o método, os argumentos, o tempo e a thread. A anotação foi aplicada, **sem alterar
 o corpo dos métodos**, em:
 
@@ -394,37 +394,37 @@ o corpo dos métodos**, em:
 
 **Weaving:** na inicialização, o Spring detecta que esses controllers têm métodos que casam com o pointcut
 e registra no contexto um **proxy CGLIB** (uma subclasse gerada em tempo de execução) no lugar do objeto
-original. O teste `AuditoriaAspectTests` comprova isso com `AopUtils.isAopProxy(...)`.
+original. O teste `AuditAspectTests` comprova isso com `AopUtils.isAopProxy(...)`.
 
 ```mermaid
 classDiagram
     direction LR
-    class Auditado {
+    class Audited {
         <<@interface>>
         +value() String
     }
-    class AuditoriaAspect {
+    class AuditAspect {
         <<@Aspect @Component>>
-        +auditar(ProceedingJoinPoint, Auditado) Object «@Around("@annotation(auditado)")»
+        +audit(ProceedingJoinPoint, Audited) Object «@Around("@annotation(audited)")»
     }
     class VisitController {
-        +processNewVisitForm(...) «@Auditado»
+        +processNewVisitForm(...) «@Audited»
     }
     class OwnerController {
-        +showOwner(int) «@Auditado»
+        +showOwner(int) «@Audited»
     }
     class VetController {
-        +showResourcesVetList() «@Auditado»
+        +showResourcesVetList() «@Audited»
     }
     class ProxyCGLIB["VetController$$SpringCGLIB"] {
         <<gerado em runtime>>
     }
-    AuditoriaAspect ..> Auditado : pointcut
-    VisitController ..> Auditado
-    OwnerController ..> Auditado
-    VetController ..> Auditado
+    AuditAspect ..> Audited : pointcut
+    VisitController ..> Audited
+    OwnerController ..> Audited
+    VetController ..> Audited
     VetController <|-- ProxyCGLIB
-    ProxyCGLIB ..> AuditoriaAspect : chama o advice
+    ProxyCGLIB ..> AuditAspect : chama o advice
 ```
 
 ---
@@ -456,9 +456,9 @@ mostra o resultado.
 | 5. AOP | Tabela dos controllers no contexto do Spring, mostrando quais viraram **proxy CGLIB** (`VetController$$SpringCGLIB$$0`), e botões que chamam métodos auditados e exibem a linha `[AUDITORIA]` |
 | Console ao vivo | Os **logs reais** do aspecto, do listener e do gRPC, capturados por um appender do Logback. Funciona também no Render, onde não há terminal à vista |
 
-Arquivos: `painel/PainelController.java` (página + API `/api/painel/*`), `GrpcDemoCliente.java`,
-`BenchmarkDemo.java`, `PainelLogAppender.java`, `templates/painel/painel.html`,
-`static/resources/js/painel.js` e `static/resources/css/painel.css`. Os diagramas da página usam
+Arquivos: `dashboard/DashboardController.java` (página + API `/api/dashboard/*`), `GrpcDemoClient.java`,
+`BenchmarkDemo.java`, `DashboardLogAppender.java`, `templates/dashboard/dashboard.html`,
+`static/resources/js/dashboard.js` e `static/resources/css/dashboard.css`. Os diagramas da página usam
 [Mermaid](https://mermaid.js.org) carregado de um CDN, então o navegador da apresentação precisa de internet.
 
 ---
@@ -469,7 +469,7 @@ Sim, dá para publicar no Render. Como o Render não tem runtime Java nativo, o 
 
 - `Dockerfile`: build em duas etapas (Maven + JDK 21 → JRE 21) com memória ajustada ao plano free (512 MB);
 - `.dockerignore`: deixa `target/`, `.git/` e `demos/` fora da imagem;
-- `render.yaml`: Blueprint do Render (serviço web Docker, região Virginia, health check em `/actuator/health`);
+- `render.yaml`: Blueprint do Render (serviço web Docker, região Virginia, health check em `/health`);
 - `server.port=${PORT:8080}`: a aplicação usa a porta que o Render informa.
 
 ### Passo a passo
@@ -494,7 +494,7 @@ Sim, dá para publicar no Render. Como o Render não tem runtime Java nativo, o 
   **Abra o `/painel` uns 5 minutos antes de apresentar.**
 - **gRPC externo não funciona no Render free:** só a porta HTTP é publicada. Por isso o painel faz a chamada
   gRPC **de dentro do container** (HTTP → servidor → gRPC na 9090), o que continua sendo uma chamada de rede real.
-  O `ClienteGrpc` de linha de comando e a demo RMI rodam localmente.
+  O `GrpcClient` de linha de comando e a demo RMI rodam localmente.
 - **Actuator restrito:** no Render só `health` e `info` ficam expostos. O `/actuator/heapdump` revelaria a senha do banco.
 - **Os dados ficam no Neon:** visitas registradas durante os ensaios continuam lá. Isso é esperado e não atrapalha a demo.
 
@@ -522,16 +522,16 @@ Abra o `/painel`. **Mostrar** o cabeçalho com o ambiente: Java 21, Spring Boot 
    ```bash
    cd demos/rmi
    javac *.java
-   java Servidor            # terminal B: "Servidor RMI pronto na porta 1099"
-   java Cliente             # terminal C: lista de veterinários
+   java Server            # terminal B: "Servidor RMI pronto na porta 1099"
+   java Client             # terminal C: lista de veterinários
    ```
-   Abrir `VeterinarioService.java` e destacar `extends Remote` e `throws RemoteException`. Ctrl+C no servidor.
+   Abrir `VetService.java` e destacar `extends Remote` e `throws RemoteException`. Ctrl+C no servidor.
 2. **No painel, card 1:** comparar os dois contratos lado a lado e o diagrama antes/depois.
-3. Clicar em **Chamar ListarVeterinarios via gRPC**. **Mostrar:** a tabela de veterinários vinda do
+3. Clicar em **Chamar ListVets via gRPC**. **Mostrar:** a tabela de veterinários vinda do
    Neon, o tempo da chamada e **169 B (Protobuf) × 447 B (JSON), 62% menor**. No console:
-   `[gRPC] ListarVeterinarios recebido na thread grpc-default-executor-0`.
+   `[gRPC] ListVets recebido na thread grpc-default-executor-0`.
 4. (Opcional, local, com o app rodando em `localhost`) Cliente de linha de comando, em outra JVM:
-   `./mvnw -q exec:java@cliente-grpc`. Não rode `compile` com o app no ar, porque o DevTools reinicia a aplicação.
+   `./mvnw -q exec:java@grpc-client`. Não rode `compile` com o app no ar, porque o DevTools reinicia a aplicação.
 
 ### Extensão 2: Virtual Threads
 
@@ -563,12 +563,12 @@ Abra o `/painel`. **Mostrar** o cabeçalho com o ambiente: Java 21, Spring Boot 
 ### Extensão 4: Strategy
 
 1. **Card 4:** mostrar a tabela com a estratégia escolhida para cada pet do Neon:
-   gatos → `PrecoConsultaGato` **R$ 90,00**; cães → `PrecoConsultaCao` (100 + 5 × idade): Rosy, 25 anos,
-   **R$ 225,00**; Jewel, 26 anos, **R$ 230,00**; lagarto, cobra, hamster e pássaro → `PrecoConsultaPadrao` **R$ 70,00**.
+   gatos → `CatPriceStrategy` **R$ 90,00**; cães → `DogPriceStrategy` (100 + 5 × idade): Rosy, 25 anos,
+   **R$ 225,00**; Jewel, 26 anos, **R$ 230,00**; lagarto, cobra, hamster e pássaro → `DefaultPriceStrategy` **R$ 70,00**.
    (No banco do Postgres os pets nasceram por volta de 2000, por isso as idades são maiores que no H2.)
 2. Clicar em **tela** na linha da Rosy. Abre a tela real de nova visita com `Preço da consulta: R$ 225,00`,
-   colocado pelo `PrecoConsultaWebConfiguration` sem alterar o `VisitController`.
-3. Abrir `PrecoConsultaService.java`: o `Map<String, PrecoConsultaStrategy>` injetado e o `getOrDefault`, sem `if`.
+   colocado pelo `VisitPriceWebConfiguration` sem alterar o `VisitController`.
+3. Abrir `VisitPriceService.java`: o `Map<String, VisitPriceStrategy>` injetado e o `getOrDefault`, sem `if`.
 
 ### Extensão 5: AOP
 
@@ -577,8 +577,8 @@ Abra o `/painel`. **Mostrar** o cabeçalho com o ambiente: Java 21, Spring Boot 
 2. Clicar em **GET /vets**. **Mostrar:**
    `[AUDITORIA] VetController.showResourcesVetList() (Listar veterinários (JSON)) | args=[] | 0 ms | thread=tomcat-handler-62`.
    Clicar em **GET /owners/1** (`args=[1]`) e em **GET / (não auditado)**, que não gera linha nenhuma.
-3. Abrir `AuditoriaAspect.java` (pointcut `@annotation(auditado)`, advice `@Around`) e `VetController.java`
-   (a única mudança é a linha `@Auditado(...)`).
+3. Abrir `AuditAspect.java` (pointcut `@annotation(audited)`, advice `@Around`) e `VetController.java`
+   (a única mudança é a linha `@Audited(...)`).
 
 ### Encerrando: os testes
 
@@ -586,18 +586,18 @@ Abra o `/painel`. **Mostrar** o cabeçalho com o ambiente: Java 21, Spring Boot 
 ./mvnw test
 ```
 
-Mostrar `Tests run: 103, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
+Mostrar `Tests run: 104, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
 Os 2 pulados são os de MySQL via Testcontainers, que exigem o Docker em execução.
 
 | Extensão | Teste | O que prova |
 |---|---|---|
-| 1 | `grpc/VeterinarioGrpcServiceTests` | Uma chamada gRPC real (Netty, porta dinâmica) retorna os 6 veterinários do banco |
+| 1 | `grpc/VetGrpcServiceTests` | Uma chamada gRPC real (Netty, porta dinâmica) retorna os 6 veterinários do banco |
 | 2 | `virtualthreads/ThreadInfoControllerTests` | Uma requisição HTTP real ao Tomcat é atendida por uma virtual thread |
-| 3 | `lembrete/VisitaRegistradaEventTests` | O POST da visita publica o evento com os dados corretos e o listener roda em outra thread |
-| 4 | `preco/PrecoConsultaServiceTests`, `preco/PrecoConsultaTelaTests` | Cada tipo de pet usa sua estratégia, e o preço aparece no HTML |
-| 5 | `auditoria/AuditoriaAspectTests` | Os controllers viraram proxies AOP e o log traz método, argumentos e tempo |
-| Relatórios | `relatorio/RelatorioControllerTests` | O JasperReports compila o `.jrxml`, preenche com os pets do banco (ordenados por tipo, com a estratégia do Strategy) e exporta um PDF válido |
-| Painel | `painel/PainelControllerTests` | A página e cada endpoint da API (`ambiente`, `grpc`, `pets`, `aop`, `genericos`, `benchmark`, `logs`) respondem, e os diagramas UML são servidos em `/uml` |
+| 3 | `reminder/VisitRegisteredEventTests` | O POST da visita publica o evento com os dados corretos e o listener roda em outra thread |
+| 4 | `pricing/VisitPriceServiceTests`, `pricing/VisitPricePageTests` | Cada tipo de pet usa sua estratégia, e o preço aparece no HTML |
+| 5 | `audit/AuditAspectTests` | Os controllers viraram proxies AOP e o log traz método, argumentos e tempo |
+| Relatórios | `report/ReportControllerTests` | O JasperReports compila o `.jrxml`, preenche com os pets do banco (ordenados por tipo, com a estratégia do Strategy) e exporta um PDF válido |
+| Painel | `dashboard/DashboardControllerTests` | A página e cada endpoint da API (`environment`, `grpc`, `pets`, `aop`, `generics`, `benchmark`, `logs`) respondem, e os diagramas UML são servidos em `/uml` |
 
 ---
 
@@ -611,6 +611,6 @@ Os 2 pulados são os de MySQL via Testcontainers, que exigem o Docker em execuç
 - **Segurança do gRPC:** o servidor e o cliente usam texto puro (`usePlaintext()`), sem TLS e sem autenticação. Isso só é adequado para a demo.
 - **Painel público:** no Render qualquer pessoa com o link pode registrar visitas e rodar o benchmark. O benchmark é limitado a 2.000 tarefas e a um por vez.
 - **Preço da consulta:** o valor é apenas calculado e exibido. Ele não é gravado na visita (não houve mudança no schema).
-- **`@Auditado` e argumentos:** o log usa `toString()` dos argumentos. `Visit` não sobrescreve `toString()`, então aparece como `Visit@1a2b3c`. Em produção, cuidado para não logar dados sensíveis.
+- **`@Audited` e argumentos:** o log usa `toString()` dos argumentos. `Visit` não sobrescreve `toString()`, então aparece como `Visit@1a2b3c`. Em produção, cuidado para não logar dados sensíveis.
 - **Spring AOP:** chamadas internas (via `this`) não passam pelo proxy e não são auditadas. É uma limitação do modelo de proxies e um bom ponto de discussão com AspectJ.
 - **Acentos no console do Windows:** sem `chcp 65001`, a saída do Maven/Java pode mostrar `Veterin�rios`. É só exibição.

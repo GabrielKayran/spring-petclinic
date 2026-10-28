@@ -55,24 +55,24 @@ Mantenham o **console ao vivo** do painel visível o tempo todo: é ele que prov
 | Min | Quem | O que fazer | O que mostrar / dizer |
 |---|---|---|---|
 | 0–5 | P1 | Abrir o `/painel` | Cabeçalho: Java 21, Spring Boot 4.1, **PostgreSQL 18 (Neon)**, virtual threads ligadas. Card **Mapa da disciplina**. Explicar o deploy: GitHub → Docker → Render, banco no Neon |
-| 5–15 | P1 | RMI no terminal (`demos/rmi`) | `javac *.java`, `java Servidor`, `java Cliente`. Mostrar `extends Remote` e `throws RemoteException` |
+| 5–15 | P1 | RMI no terminal (`demos/rmi`) | `javac *.java`, `java Server`, `java Client`. Mostrar `extends Remote` e `throws RemoteException` |
 | 15–22 | P1 | Card 1 (gRPC) | Os dois contratos lado a lado; botão de chamada: **169 B em Protobuf × 447 B em JSON**; log `[gRPC]` no console |
-| 22–25 | P1 | Card 0 (Genéricos) | Botão "Inspecionar": `ArrayList == ArrayList → true`, mas o Spring lê `Map<String, PrecoConsultaStrategy>` e injeta 3 beans |
+| 22–25 | P1 | Card 0 (Genéricos) | Botão "Inspecionar": `ArrayList == ArrayList → true`, mas o Spring lê `Map<String, VisitPriceStrategy>` e injeta 3 beans |
 | 25–33 | P2 | Benchmark | Terminal: `java BenchmarkThreads.java 2000` (cerca de 10 s × 1 s). Card 2: rodar **2.000 tarefas** no servidor (**≈ 10.000 ms × 1.000 ms**) e clicar em `GET /thread` (carrier `ForkJoinPool`) |
 | 33–42 | P2 | Card 3 (Observer) | Registrar visita: a resposta volta em menos de 0,5 s e "lembrete enviado" aparece **+2.000 ms** depois em `task-N`. Abrir `VisitController` e mostrar a única linha nova, o `publishEvent` |
 | 42–50 | P3 | Card 4 (Strategy) + live coding | Tabela de preços; link "tela" da Rosy (**R$ 225,00**). **Live coding** (abaixo): criar a estratégia do hamster, local |
-| 50–55 | P3 | Card 5 (AOP) | Tabela de proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada. Abrir `AuditoriaAspect` |
+| 50–55 | P3 | Card 5 (AOP) | Tabela de proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada. Abrir `AuditAspect` |
 | 55–59 | P3 | Card 6 (Relatório) | "Gerar relatório PDF": pets agrupados por tipo, estratégia e preço (total **R$ 1.640,00**). O console mostra o `[AUDITORIA]` do relatório: cerca de 1 s no Render (o `.jrxml` é compilado quando a aplicação sobe). Abrir `pets-e-precos.jrxml` |
-| 59–63 | P3 | Galeria UML + testes | Card UML (11 diagramas): rastrear diagrama → código. Terminal: `./mvnw test` → **103 testes, 0 falhas** |
+| 59–63 | P3 | Galeria UML + testes | Card UML (11 diagramas): rastrear diagrama → código. Terminal: `./mvnw test` → **104 testes, 0 falhas** |
 | 63–70 | todos | Perguntas | Usar a lista de perguntas prováveis abaixo |
 
 ### Live coding: Strategy e o princípio Aberto/Fechado (cerca de 3 min, local)
 
 Na máquina, com `./mvnw spring-boot:run` (H2): o DevTools reinicia sozinho ao salvar. Crie
-`src/main/java/org/springframework/samples/petclinic/preco/PrecoConsultaHamster.java`:
+`src/main/java/org/springframework/samples/petclinic/pricing/HamsterPriceStrategy.java`:
 
 ```java
-package org.springframework.samples.petclinic.preco;
+package org.springframework.samples.petclinic.pricing;
 
 import java.math.BigDecimal;
 
@@ -80,18 +80,18 @@ import org.springframework.samples.petclinic.owner.Pet;
 import org.springframework.stereotype.Component;
 
 @Component("hamster")
-class PrecoConsultaHamster implements PrecoConsultaStrategy {
+class HamsterPriceStrategy implements VisitPriceStrategy {
 
 	@Override
-	public BigDecimal calcularPreco(Pet pet) {
+	public BigDecimal calculatePrice(Pet pet) {
 		return new BigDecimal("45.00");
 	}
 
 }
 ```
 
-Recarregue `http://localhost:8080/painel#ext4`: o Basil (hamster) passa de `PrecoConsultaPadrao` R$ 70,00 para
-`PrecoConsultaHamster` **R$ 45,00**. **Nenhuma classe existente foi alterada**, e isso é o OCP na prática.
+Recarregue `http://localhost:8080/painel#ext4`: o Basil (hamster) passa de `DefaultPriceStrategy` R$ 70,00 para
+`HamsterPriceStrategy` **R$ 45,00**. **Nenhuma classe existente foi alterada**, e isso é o OCP na prática.
 Apaguem o arquivo depois: ele quebraria o teste que espera 3 estratégias.
 
 ---
@@ -155,9 +155,9 @@ atualizados.
 
 **Como funciona o relatório (JasperReports, item 4.4)?** Três passos: **compilar** o layout `.jrxml` (o arquivo
 que o iReport, hoje Jaspersoft Studio, edita visualmente) em um `JasperReport`; **preencher** com os dados
-(`JRBeanCollectionDataSource`, que lê os getters de `LinhaRelatorio`); **exportar** para PDF. O layout tem
+(`JRBeanCollectionDataSource`, que lê os getters de `ReportRow`); **exportar** para PDF. O layout tem
 `parameter`, `field`, `variable` (somas) e bandas (title, detail, groupHeader/groupFooter, summary). O relatório
-não calcula preço: recebe as linhas prontas do `PrecoConsultaService` (Strategy). Compilamos uma vez e guardamos.
+não calcula preço: recebe as linhas prontas do `VisitPriceService` (Strategy). Compilamos uma vez e guardamos.
 
 **O Jasper é "clássico" ou "moderno"?** O motor continua sendo o padrão no Java (versão 7, de 2025). O que ficou
 para trás foi o editor iReport, substituído pelo Jaspersoft Studio, e o formato antigo do `.jrxml`.

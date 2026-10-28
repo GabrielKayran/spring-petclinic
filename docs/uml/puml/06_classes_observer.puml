@@ -3,7 +3,7 @@ skinparam backgroundColor white
 skinparam shadowing false
 class VisitController <<@Controller>> {
  - owners: OwnerRepository
- - eventos: ApplicationEventPublisher
+ - events: ApplicationEventPublisher
  + processNewVisitForm(...): String
 }
 interface OwnerRepository
@@ -11,23 +11,23 @@ interface ApplicationEventPublisher {
  + publishEvent(event): void
 }
 class ApplicationEvent
-class VisitaRegistradaEvent {
- - nomeDono: String
- - nomePet: String
- - dataVisita: LocalDate
- - descricao: String
+class VisitRegisteredEvent {
+ - ownerName: String
+ - petName: String
+ - visitDate: LocalDate
+ - description: String
 }
-class LembreteVisitaListener <<@Component>> {
- + enviarLembrete(event: VisitaRegistradaEvent): void
+class VisitReminderListener <<@Component>> {
+ + sendReminder(event: VisitRegisteredEvent): void
 }
-class LembreteAsyncConfiguration <<@EnableAsync>>
-ApplicationEvent <|-- VisitaRegistradaEvent
+class AsyncConfiguration <<@EnableAsync>>
+ApplicationEvent <|-- VisitRegisteredEvent
 VisitController --> OwnerRepository : save(owner)
 VisitController --> ApplicationEventPublisher : publishEvent
-VisitController ..> VisitaRegistradaEvent : cria
-LembreteVisitaListener ..> VisitaRegistradaEvent : observa @EventListener
-LembreteAsyncConfiguration ..> LembreteVisitaListener : @Async
-note right of LembreteVisitaListener
+VisitController ..> VisitRegisteredEvent : cria
+VisitReminderListener ..> VisitRegisteredEvent : observa @EventListener
+AsyncConfiguration ..> VisitReminderListener : @Async
+note right of VisitReminderListener
   Thread.sleep(2 s) simula lembrete.
   Sem envio externo real.
 end note

@@ -27,7 +27,7 @@
     <webjars-bootstrap.version>5.3.8</webjars-bootstrap.version>
     <webjars-font-awesome.version>4.7.0</webjars-font-awesome.version>
 
-    <!-- Relatórios -->
+    <!-- Reports -->
     <jasperreports.version>7.0.8</jasperreports.version>
     <openpdf.version>1.3.43</openpdf.version>
 
@@ -47,7 +47,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-    <!-- Extensão 5: Spring AOP com anotações do AspectJ (no Boot 3 o nome era spring-boot-starter-aop) -->
+    <!-- Spring AOP with AspectJ annotations (spring-boot-starter-aop in Boot 3) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-aspectj</artifactId>
@@ -72,7 +72,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc</artifactId>
     </dependency>
-    <!-- Extensão 1: gRPC, o sucessor moderno do RMI (starter nativo do Spring Boot 4.1) -->
+    <!-- gRPC server (native Spring Boot 4.1 starter) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-grpc-server</artifactId>
@@ -83,14 +83,14 @@
       <artifactId>cache-api</artifactId>
     </dependency>
 
-    <!-- Relatório (tópico 4.4 do plano de ensino): JasperReports, o mesmo motor do iReport/Jaspersoft Studio -->
+    <!-- PDF reports with JasperReports -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
       <version>${jasperreports.version}</version>
     </dependency>
-    <!-- Exportação para PDF. O pom do Jasper aponta para um fork do OpenPDF que só existe no repositório
-      da Jaspersoft; usamos o OpenPDF oficial do Maven Central, que tem a mesma API (com.lowagie) -->
+    <!-- PDF export. Jasper depends on an OpenPDF fork that only exists in the Jaspersoft repository;
+      the official OpenPDF from Maven Central has the same API (com.lowagie) -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports-pdf</artifactId>
@@ -107,7 +107,7 @@
       <artifactId>openpdf</artifactId>
       <version>${openpdf.version}</version>
     </dependency>
-    <!-- Compila as expressões do .jrxml sem precisar de JDK (a imagem do Render só tem JRE) -->
+    <!-- Compiles .jrxml expressions without a JDK (the runtime image only has a JRE) -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports-jdt</artifactId>
@@ -308,19 +308,19 @@
         <groupId>org.graalvm.buildtools</groupId>
         <artifactId>native-maven-plugin</artifactId>
       </plugin>
-      <!-- Extensão 1: gera as classes Java a partir de src/main/protobuf/*.proto.
-        A versão do protoc e o plugin grpc-java já vêm configurados pelo spring-boot-starter-parent -->
+      <!-- Generates Java classes from src/main/protobuf/*.proto.
+        protoc and grpc-java versions come from spring-boot-starter-parent -->
       <plugin>
         <groupId>io.github.ascopes</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>
       </plugin>
-      <!-- Painel: copia os diagramas UML do grupo (docs/uml/svg) para /uml/*.svg, sem duplicar arquivos no Git -->
+      <!-- Serves docs/uml/svg at /uml/*.svg for the dashboard gallery -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copiar-uml-para-o-painel</id>
+            <id>copy-uml-diagrams</id>
             <phase>process-resources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -336,18 +336,17 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Extensão 1: roda o cliente gRPC de linha de comando em uma JVM separada do servidor.
-        Uso, com a aplicação no ar: ./mvnw -q exec:java@cliente-grpc (sem "compile": recompilar faria o
-        DevTools reiniciar a aplicação e derrubar o gRPC por alguns segundos) -->
+      <!-- Command-line gRPC client in its own JVM: ./mvnw -q exec:java@grpc-client
+        (without "compile": recompiling makes DevTools restart the running app) -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.6.4</version>
         <executions>
           <execution>
-            <id>cliente-grpc</id>
+            <id>grpc-client</id>
             <configuration>
-              <mainClass>org.springframework.samples.petclinic.grpc.cliente.ClienteGrpc</mainClass>
+              <mainClass>org.springframework.samples.petclinic.grpc.client.GrpcClient</mainClass>
             </configuration>
           </execution>
         </executions>

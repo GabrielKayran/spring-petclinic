@@ -38,11 +38,11 @@
 <rect fill="#FFF4E4" height="120" rx="14" stroke="#AF7932" stroke-width="2" width="360" x="855" y="378" />
 <text fill="#162C35" font-family="DejaVu Sans" font-size="18" font-weight="bold" x="874" y="408">Servidor gRPC / Netty</text>
 <text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="874" y="435">HTTP/2 :9090 · só interno</text>
-<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="874" y="460">VeterinarioGrpcService</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="874" y="460">VetGrpcService</text>
 
 <rect fill="#F3F8F9" height="140" rx="14" stroke="#BFD0D6" stroke-width="2" width="765" x="450" y="560" />
 <text fill="#162C35" font-family="DejaVu Sans" font-size="18" font-weight="bold" x="469" y="590">Domínio e extensões</text>
-<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="618">Strategy · Observer @Async · AOP @Auditado · Relatórios JasperReports</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="618">Strategy · Observer @Async · AOP @Audited · Relatórios JasperReports</text>
 <text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="643">Spring Data JPA / Hibernate · pool de conexões Hikari</text>
 <text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="668">actuator restrito a health e info</text>
 
@@ -95,5 +95,5 @@
 <text fill="#AF7932" font-family="DejaVu Sans" font-size="13" x="182" y="725">Manual Deploy: docker build</text>
 <text fill="#AF7932" font-family="DejaVu Sans" font-size="13" x="182" y="745">(Dockerfile multi-stage)</text>
 
-<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="35" y="845">Só a porta HTTP é pública no Render. O painel chama o gRPC de dentro do container; a demo RMI e o ClienteGrpc rodam localmente (diagrama 09).</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="35" y="845">Só a porta HTTP é pública no Render. O painel chama o gRPC de dentro do container; a demo RMI e o GrpcClient rodam localmente (diagrama 09).</text>
 </svg>

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package petclinic;
+
+option java_multiple_files = true;
+option java_package = "org.springframework.samples.petclinic.grpc.proto";
+option java_outer_classname = "VetsProto";
+
+service VetService {
+  rpc ListVets (ListVetsRequest) returns (ListVetsResponse);
+}
+
+message ListVetsRequest {
+}
+
+message VetInfo {
+  int32 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  repeated string specialties = 4;
+}
+
+message ListVetsResponse {
+  repeated VetInfo vets = 1;
+}

@@ -5,15 +5,15 @@ skinparam shadowing false
 actor "Usuário / navegador" as UI
 component "Spring MVC / Thymeleaf\nTomcat HTTP 8080" as WEB
 component "Owner / Pet / Visit / Vet\nControllers" as C
-component "PrecoConsultaService\nStrategy" as STRAT
+component "VisitPriceService\nStrategy" as STRAT
 component "ApplicationEventPublisher\nListener @Async" as EVT
-component "AuditoriaAspect\nSpring AOP" as AOP
+component "AuditAspect\nSpring AOP" as AOP
 component "OwnerRepository / VetRepository\nSpring Data JPA / Hibernate" as REPO
 database "PostgreSQL (Neon)\nprodução: profile postgres\ntestes: H2 em memória" as H2
-component "RelatorioService\nJasperReports 7 (.jrxml)" as REL
-component "PainelController\n/painel" as PANEL
-component "GrpcDemoCliente" as GCLI
-component "VeterinarioGrpcService\nNetty :9090" as GSERV
+component "ReportService\nJasperReports 7 (.jrxml)" as REL
+component "DashboardController\n/painel" as PANEL
+component "GrpcDemoClient" as GCLI
+component "VetGrpcService\nNetty :9090" as GSERV
 UI --> WEB : HTTP
 WEB --> C
 WEB --> PANEL

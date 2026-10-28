@@ -1,13 +1,13 @@
 # Demo: RMI puro (Java RMI, sem Spring e sem Maven)
 
 Esta é a versão "clássica" da chamada remota. Compare com o serviço gRPC em
-`src/main/protobuf/veterinarios.proto` e no pacote `org.springframework.samples.petclinic.grpc`.
+`src/main/protobuf/vets.proto` e no pacote `org.springframework.samples.petclinic.grpc`.
 
 | Arquivo                   | Papel                                                    |
 |---------------------------|----------------------------------------------------------|
-| `VeterinarioService.java` | Interface remota (o contrato, só em Java)                |
-| `Servidor.java`           | Implementação + registro do stub no RMI Registry (porta 1099) |
-| `Cliente.java`            | Busca o stub pelo nome e chama o método remoto           |
+| `VetService.java` | Interface remota (o contrato, só em Java)                |
+| `Server.java`           | Implementação + registro do stub no RMI Registry (porta 1099) |
+| `Client.java`            | Busca o stub pelo nome e chama o método remoto           |
 
 ## Como rodar (JDK 21+)
 
@@ -17,10 +17,10 @@ Execute a partir desta pasta (`demos/rmi`):
 javac *.java
 
 # Terminal 1: servidor (fica rodando)
-java Servidor
+java Server
 
 # Terminal 2: cliente
-java Cliente
+java Client
 ```
 
 Saída esperada no cliente:

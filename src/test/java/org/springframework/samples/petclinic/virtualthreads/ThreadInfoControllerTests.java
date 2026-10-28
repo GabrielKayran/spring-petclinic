@@ -28,33 +28,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.virtualthreads.ThreadInfoController.ThreadInfo;
 
 /**
- * Extensão 2: faz uma requisição HTTP real ao Tomcat embarcado.
- * <p>
- * Não usamos MockMvc aqui de propósito: o MockMvc executa o controller na própria thread
- * do JUnit, então nunca mostraria uma virtual thread. Só uma requisição de verdade passa
- * pelo executor do Tomcat.
+ * Uses a real HTTP request: MockMvc runs the controller on the JUnit thread, so it would
+ * never show a virtual thread.
  */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class ThreadInfoControllerTests {
 
 	@LocalServerPort
-	private int porta;
+	private int port;
 
 	@Autowired
 	private RestTemplateBuilder builder;
 
 	@Test
-	void requisicaoDeveSerAtendidaPorVirtualThread() {
-		ResponseEntity<ThreadInfo> resposta = this.builder.baseUri("http://localhost:" + this.porta)
+	void requestIsServedByAVirtualThread() {
+		ResponseEntity<ThreadInfo> response = this.builder.baseUri("http://localhost:" + this.port)
 			.build()
 			.getForEntity("/thread", ThreadInfo.class);
 
-		assertThat(resposta.getStatusCode()).isEqualTo(HttpStatus.OK);
-		ThreadInfo info = resposta.getBody();
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		ThreadInfo info = response.getBody();
 		assertThat(info).isNotNull();
 		assertThat(info.virtual()).isTrue();
-		assertThat(info.tipo()).isEqualTo("virtual");
-		assertThat(info.detalhes()).startsWith("VirtualThread");
+		assertThat(info.type()).isEqualTo("virtual");
+		assertThat(info.details()).startsWith("VirtualThread");
 	}
 
 }
