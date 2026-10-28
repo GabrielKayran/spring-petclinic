@@ -27,6 +27,10 @@
     <webjars-bootstrap.version>5.3.8</webjars-bootstrap.version>
     <webjars-font-awesome.version>4.7.0</webjars-font-awesome.version>
 
+    <!-- Relatórios -->
+    <jasperreports.version>7.0.8</jasperreports.version>
+    <openpdf.version>1.3.43</openpdf.version>
+
     <!-- Checkstyle needs to stay on v12 since v13 sets minimal jdk to 21 - https://checkstyle.org/releasenotes.html#Release_13.0.0 -->
     <checkstyle.version>12.3.1</checkstyle.version>
     <jacoco.version>0.8.15</jacoco.version>
@@ -77,6 +81,43 @@
     <dependency>
       <groupId>javax.cache</groupId>
       <artifactId>cache-api</artifactId>
+    </dependency>
+
+    <!-- Relatório (tópico 4.4 do plano de ensino): JasperReports, o mesmo motor do iReport/Jaspersoft Studio -->
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports</artifactId>
+      <version>${jasperreports.version}</version>
+    </dependency>
+    <!-- Exportação para PDF. O pom do Jasper aponta para um fork do OpenPDF que só existe no repositório
+      da Jaspersoft; usamos o OpenPDF oficial do Maven Central, que tem a mesma API (com.lowagie) -->
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports-pdf</artifactId>
+      <version>${jasperreports.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.librepdf</groupId>
+          <artifactId>openpdf</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.github.librepdf</groupId>
+      <artifactId>openpdf</artifactId>
+      <version>${openpdf.version}</version>
+    </dependency>
+    <!-- Compila as expressões do .jrxml sem precisar de JDK (a imagem do Render só tem JRE) -->
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports-jdt</artifactId>
+      <version>${jasperreports.version}</version>
+    </dependency>
+    <!-- Fontes DejaVu embutidas: o PDF sai igual no Windows e no container Linux -->
+    <dependency>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports-fonts</artifactId>
+      <version>${jasperreports.version}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.xml.bind</groupId>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Relatório "Pets e preço da consulta" (tópico 4.4 do plano de ensino: JasperReports / iReport).
+
+  Este é o formato JRXML do JasperReports 7: o mesmo arquivo que o Jaspersoft Studio
+  (sucessor do iReport) abre e edita visualmente. As partes de um relatório:
+  - parameter: valores passados pelo Java (data de geração, banco);
+  - field: colunas de cada linha da fonte de dados (getters de LinhaRelatorio);
+  - variable: cálculos feitos pelo Jasper (somas, contagens);
+  - bandas: title, columnHeader, detail (uma por linha), groupHeader/groupFooter, summary, pageFooter.
+-->
+<jasperReport name="pets-e-precos" language="java" pageWidth="595" pageHeight="842" columnWidth="535"
+		leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30" whenNoDataType="AllSectionsNoDetail">
+	<parameter name="GERADO_EM" class="java.lang.String"/>
+	<parameter name="BANCO" class="java.lang.String"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="estrategia" class="java.lang.String"/>
+	<field name="pet" class="java.lang.String"/>
+	<field name="dono" class="java.lang.String"/>
+	<field name="idade" class="java.lang.Integer"/>
+	<field name="visitas" class="java.lang.Integer"/>
+	<field name="preco" class="java.math.BigDecimal"/>
+	<variable name="TOTAL_VISITAS" calculation="Sum" class="java.lang.Integer">
+		<expression><![CDATA[$F{visitas}]]></expression>
+	</variable>
+	<variable name="TOTAL_PRECO" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{preco}]]></expression>
+	</variable>
+	<variable name="PRECO_DO_TIPO" resetType="Group" resetGroup="porTipo" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{preco}]]></expression>
+	</variable>
+	<group name="porTipo">
+		<expression><![CDATA[$F{tipo}]]></expression>
+		<groupHeader>
+			<band height="28">
+				<element kind="rectangle" x="0" y="6" width="535" height="20" backcolor="#EEF5E8" mode="Opaque">
+					<pen lineWidth="0.0"/>
+				</element>
+				<element kind="textField" x="8" y="6" width="300" height="20" fontName="DejaVu Sans" fontSize="11.0" bold="true" forecolor="#34302D" vTextAlign="Middle">
+					<expression><![CDATA["Tipo: " + $F{tipo}]]></expression>
+				</element>
+				<element kind="textField" x="300" y="6" width="227" height="20" fontName="DejaVu Sans" fontSize="9.0" forecolor="#4A6B2F" hTextAlign="Right" vTextAlign="Middle">
+					<expression><![CDATA["Strategy: " + $F{estrategia}]]></expression>
+				</element>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<element kind="textField" x="300" y="2" width="227" height="16" fontName="DejaVu Sans" fontSize="9.0" italic="true" forecolor="#666666" hTextAlign="Right">
+					<expression><![CDATA["Subtotal " + $F{tipo} + ": " + new java.text.DecimalFormat("¤ #,##0.00", java.text.DecimalFormatSymbols.getInstance(java.util.Locale.of("pt", "BR"))).format($V{PRECO_DO_TIPO})]]></expression>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<title height="78">
+		<element kind="rectangle" x="0" y="0" width="535" height="56" backcolor="#34302D" mode="Opaque">
+			<pen lineWidth="0.0"/>
+		</element>
+		<element kind="staticText" x="14" y="6" width="507" height="26" fontName="DejaVu Sans" fontSize="18.0" bold="true" forecolor="#FFFFFF">
+			<text><![CDATA[PetClinic · Pets e preço da consulta]]></text>
+		</element>
+		<element kind="textField" x="14" y="32" width="507" height="18" fontName="DejaVu Sans" fontSize="9.0" forecolor="#B8E986">
+			<expression><![CDATA["Gerado em " + $P{GERADO_EM} + " · banco " + $P{BANCO} + " · JasperReports"]]></expression>
+		</element>
+	</title>
+	<columnHeader height="22">
+		<element kind="staticText" x="8" y="4" width="150" height="16" fontName="DejaVu Sans" fontSize="9.0" bold="true" forecolor="#777777">
+			<text><![CDATA[PET]]></text>
+		</element>
+		<element kind="staticText" x="160" y="4" width="180" height="16" fontName="DejaVu Sans" fontSize="9.0" bold="true" forecolor="#777777">
+			<text><![CDATA[DONO]]></text>
+		</element>
+		<element kind="staticText" x="340" y="4" width="55" height="16" fontName="DejaVu Sans" fontSize="9.0" bold="true" forecolor="#777777" hTextAlign="Right">
+			<text><![CDATA[IDADE]]></text>
+		</element>
+		<element kind="staticText" x="395" y="4" width="55" height="16" fontName="DejaVu Sans" fontSize="9.0" bold="true" forecolor="#777777" hTextAlign="Right">
+			<text><![CDATA[VISITAS]]></text>
+		</element>
+		<element kind="staticText" x="450" y="4" width="77" height="16" fontName="DejaVu Sans" fontSize="9.0" bold="true" forecolor="#777777" hTextAlign="Right">
+			<text><![CDATA[PREÇO]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="18">
+			<element kind="textField" x="8" y="1" width="150" height="16" fontName="DejaVu Sans" fontSize="10.0">
+				<expression><![CDATA[$F{pet}]]></expression>
+			</element>
+			<element kind="textField" x="160" y="1" width="180" height="16" fontName="DejaVu Sans" fontSize="10.0" forecolor="#555555">
+				<expression><![CDATA[$F{dono}]]></expression>
+			</element>
+			<element kind="textField" x="340" y="1" width="55" height="16" fontName="DejaVu Sans" fontSize="10.0" hTextAlign="Right">
+				<expression><![CDATA[$F{idade} + " anos"]]></expression>
+			</element>
+			<element kind="textField" x="395" y="1" width="55" height="16" fontName="DejaVu Sans" fontSize="10.0" hTextAlign="Right">
+				<expression><![CDATA[$F{visitas}]]></expression>
+			</element>
+			<element kind="textField" x="450" y="1" width="77" height="16" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Right" pattern="¤ #,##0.00">
+				<expression><![CDATA[$F{preco}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="20">
+		<element kind="textField" x="0" y="4" width="535" height="14" fontName="DejaVu Sans" fontSize="8.0" forecolor="#999999" hTextAlign="Center">
+			<expression><![CDATA["POO2 · Estudo de caso · página " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="60">
+		<element kind="line" x="0" y="8" width="535" height="1" forecolor="#34302D"/>
+		<element kind="textField" x="8" y="16" width="330" height="18" fontName="DejaVu Sans" fontSize="10.0">
+			<expression><![CDATA[$V{REPORT_COUNT} + " pets · " + $V{TOTAL_VISITAS} + " visitas registradas"]]></expression>
+		</element>
+		<element kind="staticText" x="300" y="16" width="150" height="18" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Right">
+			<text><![CDATA[Uma consulta de cada:]]></text>
+		</element>
+		<element kind="textField" x="450" y="16" width="77" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Right" pattern="¤ #,##0.00">
+			<expression><![CDATA[$V{TOTAL_PRECO}]]></expression>
+		</element>
+		<element kind="staticText" x="8" y="38" width="519" height="16" fontName="DejaVu Sans" fontSize="8.0" italic="true" forecolor="#777777">
+			<text><![CDATA[Preços calculados pelo padrão Strategy (PrecoConsultaService); o relatório não conhece as regras de preço.]]></text>
+		</element>
+	</summary>
+</jasperReport>
