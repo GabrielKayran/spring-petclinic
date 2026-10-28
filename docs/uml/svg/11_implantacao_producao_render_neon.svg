@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg baseProfile="full" height="900" version="1.1" viewBox="0 0 1680 900" width="1680" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style>text{font-family:"DejaVu Sans",Verdana,sans-serif}</style></defs>
+<rect fill="white" height="900" width="1680" x="0" y="0" />
+<text fill="#176749" font-family="DejaVu Sans" font-size="27" font-weight="bold" x="35" y="52">IMPLANTAÇÃO EM PRODUÇÃO: RENDER + NEON</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="16" x="35" y="80">O que roda durante a apresentação: petclinic-poo2.onrender.com/painel</text>
+
+<!-- Navegador -->
+<rect fill="#EAF3F8" height="130" rx="14" stroke="#3A718E" stroke-width="2" width="300" x="35" y="160" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="19" font-weight="bold" x="54" y="192">Navegador</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="54" y="220">Chrome no projetor</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="54" y="245">HTTPS · /painel</text>
+
+<!-- GitHub -->
+<rect fill="#FFF4E4" height="130" rx="14" stroke="#AF7932" stroke-width="2" width="300" x="35" y="560" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="19" font-weight="bold" x="54" y="592">GitHub</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="54" y="620">GabrielKayran/</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="54" y="645">spring-petclinic · main</text>
+
+<!-- Nó Render -->
+<rect fill="#F8FBFA" height="690" rx="25" stroke="#26956A" stroke-width="2.5" width="880" x="390" y="105" />
+<text fill="#176749" font-family="DejaVu Sans" font-size="21" font-weight="bold" x="415" y="142">NÓ: RENDER (VIRGINIA, EUA)</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="415" y="166">Web Service · plano free · 512 MB · dorme após ~15 min sem acesso</text>
+
+<rect fill="#EAF3F8" height="70" rx="12" stroke="#3A718E" stroke-width="2" width="820" x="420" y="186" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="18" font-weight="bold" x="440" y="214">Proxy HTTPS do Render</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="440" y="240">termina o TLS e encaminha para a porta informada em $PORT</text>
+
+<!-- Container -->
+<rect fill="#FFFFFF" height="480" rx="20" stroke="#BFD0D6" stroke-width="2" width="820" x="420" y="290" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="18" font-weight="bold" x="500" y="324">Container Docker · eclipse-temurin:21-jre</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="14" x="500" y="348">Java 21 · Spring Boot 4.1 · fuso de São Paulo · virtual threads</text>
+
+<rect fill="#E8F6EF" height="120" rx="14" stroke="#26956A" stroke-width="2" width="360" x="450" y="378" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="18" font-weight="bold" x="469" y="408">Tomcat / Spring MVC</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="435">HTTP :$PORT (10000) · público</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="460">Controllers, Thymeleaf, painel</text>
+
+<rect fill="#FFF4E4" height="120" rx="14" stroke="#AF7932" stroke-width="2" width="360" x="855" y="378" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="18" font-weight="bold" x="874" y="408">Servidor gRPC / Netty</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="874" y="435">HTTP/2 :9090 · só interno</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="874" y="460">VeterinarioGrpcService</text>
+
+<rect fill="#F3F8F9" height="140" rx="14" stroke="#BFD0D6" stroke-width="2" width="765" x="450" y="560" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="18" font-weight="bold" x="469" y="590">Domínio e extensões</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="618">Strategy · Observer @Async · AOP @Auditado · Relatórios JasperReports</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="643">Spring Data JPA / Hibernate · pool de conexões Hikari</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="469" y="668">actuator restrito a health e info</text>
+
+<!-- Nó Neon -->
+<rect fill="#F8FBFA" height="330" rx="25" stroke="#3A718E" stroke-width="2.5" width="340" x="1310" y="105" />
+<text fill="#2C5A73" font-family="DejaVu Sans" font-size="21" font-weight="bold" x="1332" y="142">NÓ: NEON</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="1332" y="166">São Paulo (sa-east-1)</text>
+<rect fill="#EAF3F8" height="170" rx="14" stroke="#3A718E" stroke-width="2" width="290" x="1335" y="200" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="19" font-weight="bold" x="1354" y="232">PostgreSQL 18</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="1354" y="262">banco neondb</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="1354" y="287">endpoint com pooler</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="1354" y="312">sslmode=require</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="1354" y="337">schema/data idempotentes</text>
+
+<!-- Variáveis -->
+<rect fill="#FFFFFF" height="250" rx="14" stroke="#BFD0D6" stroke-dasharray="6,5" stroke-width="2" width="340" x="1310" y="470" />
+<text fill="#162C35" font-family="DejaVu Sans" font-size="17" font-weight="bold" x="1330" y="502">Variáveis de ambiente</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="14" x="1330" y="528">(guardadas no painel do Render,</text>
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="14" x="1330" y="548">nunca no Git)</text>
+<text fill="#203943" font-family="DejaVu Sans" font-size="14" x="1330" y="580">SPRING_PROFILES_ACTIVE=postgres</text>
+<text fill="#203943" font-family="DejaVu Sans" font-size="14" x="1330" y="605">POSTGRES_URL</text>
+<text fill="#203943" font-family="DejaVu Sans" font-size="14" x="1330" y="630">POSTGRES_USER</text>
+<text fill="#203943" font-family="DejaVu Sans" font-size="14" x="1330" y="655">POSTGRES_PASS</text>
+<text fill="#203943" font-family="DejaVu Sans" font-size="14" x="1330" y="680">MANAGEMENT_..._INCLUDE</text>
+
+<!-- Setas -->
+<path d="M335,225 L420,221" fill="none" stroke="#3A718E" stroke-width="2" />
+<polygon fill="#3A718E" points="420,221 410.0,217.0 410.0,225.0" />
+<text fill="#3A718E" font-family="DejaVu Sans" font-size="13" x="342" y="210">HTTPS</text>
+
+<path d="M472,256 L472,378" fill="none" stroke="#3A718E" stroke-width="2" />
+<polygon fill="#3A718E" points="472,378 476.0,368.0 468.0,368.0" />
+<text fill="#3A718E" font-family="DejaVu Sans" font-size="13" x="480" y="282">HTTP :$PORT</text>
+
+<path d="M810,438 L855,438" fill="none" stroke="#AF7932" stroke-width="2" />
+<polygon fill="#AF7932" points="855,438 845.0,434.0 845.0,442.0" />
+<text fill="#AF7932" font-family="DejaVu Sans" font-size="13" x="772" y="371">gRPC :9090</text>
+
+<path d="M630,498 L630,560" fill="none" stroke="#176749" stroke-width="2" />
+<polygon fill="#176749" points="630,560 634.0,550.0 626.0,550.0" />
+<path d="M1035,498 L1035,560" fill="none" stroke="#AF7932" stroke-width="2" />
+<polygon fill="#AF7932" points="1035,560 1039.0,550.0 1031.0,550.0" />
+
+<path d="M1215,630 L1282,630 L1282,285 L1335,285" fill="none" stroke="#3A718E" stroke-width="2" />
+<polygon fill="#3A718E" points="1335,285 1325.0,281.0 1325.0,289.0" />
+<text fill="#3A718E" font-family="DejaVu Sans" font-size="13" text-anchor="middle" transform="translate(1298,470) rotate(-90)">JDBC + TLS</text>
+
+<path d="M335,625 L390,625" fill="none" stroke="#AF7932" stroke-dasharray="6,4" stroke-width="2" />
+<polygon fill="#AF7932" points="390,625 380.0,621.0 380.0,629.0" />
+<text fill="#AF7932" font-family="DejaVu Sans" font-size="13" x="182" y="725">Manual Deploy: docker build</text>
+<text fill="#AF7932" font-family="DejaVu Sans" font-size="13" x="182" y="745">(Dockerfile multi-stage)</text>
+
+<text fill="#5C7280" font-family="DejaVu Sans" font-size="15" x="35" y="845">Só a porta HTTP é pública no Render. O painel chama o gRPC de dentro do container; a demo RMI e o ClienteGrpc rodam localmente (diagrama 09).</text>
+</svg>

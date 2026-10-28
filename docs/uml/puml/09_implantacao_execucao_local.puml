@@ -26,9 +26,10 @@ node "Notebook Windows" {
     rmic --> rmis : chamada remota
   }
 }
-database "PostgreSQL / Neon\n(só profile postgres)" as pg
-app ..> pg : alternativo ao H2
+database "PostgreSQL / Neon\n(profile postgres)" as pg
+app ..> pg : em produção, no lugar do H2
 note bottom of pg
-  Não ativo no teste local do usuário.
+  Banco usado no Render.
+  Implantação em produção: diagrama 11.
 end note
 @enduml

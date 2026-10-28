@@ -9,7 +9,8 @@ component "PrecoConsultaService\nStrategy" as STRAT
 component "ApplicationEventPublisher\nListener @Async" as EVT
 component "AuditoriaAspect\nSpring AOP" as AOP
 component "OwnerRepository / VetRepository\nSpring Data JPA / Hibernate" as REPO
-database "H2 em memória\n(default)" as H2
+database "PostgreSQL (Neon)\nprodução: profile postgres\ntestes: H2 em memória" as H2
+component "RelatorioService\nJasperReports 7 (.jrxml)" as REL
 component "PainelController\n/painel" as PANEL
 component "GrpcDemoCliente" as GCLI
 component "VeterinarioGrpcService\nNetty :9090" as GSERV
@@ -24,6 +25,8 @@ REPO --> H2
 PANEL --> GCLI
 GCLI --> GSERV : gRPC/Protobuf
 GSERV --> REPO : findAll(vets)
+REL --> REPO : dados
+REL ..> STRAT : preço via Strategy
 note bottom of PANEL
   RMI puro fica fora da aplicação principal
   (demos/rmi). Este diagrama retrata a

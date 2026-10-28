@@ -1,0 +1,37 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+title Implantação em produção: Render + Neon
+
+node "Navegador (projetor)" as browser
+node "GitHub\nGabrielKayran/spring-petclinic · main" as github
+
+node "Render (Virginia, EUA)\nWeb Service · plano free · 512 MB" {
+  component "Proxy HTTPS do Render" as proxy
+  node "Container Docker\neclipse-temurin:21-jre" {
+    node "JVM Java 21 · Spring Boot 4.1\nfuso America/Sao_Paulo" {
+      component "Tomcat / Spring MVC\nHTTP :$PORT (público)" as http
+      component "Servidor gRPC / Netty\n:9090 (só interno)" as grpc
+      component "Domínio e extensões\nStrategy · Observer · AOP · JasperReports\nSpring Data JPA / Hibernate" as app
+    }
+  }
+}
+
+node "Neon (São Paulo, sa-east-1)" {
+  database "PostgreSQL 18\nneondb · pooler" as pg
+}
+
+browser --> proxy : HTTPS 443
+proxy --> http : HTTP :$PORT
+http --> grpc : gRPC localhost:9090
+http --> app
+grpc --> app
+app --> pg : JDBC + TLS
+github ..> "Container Docker\neclipse-temurin:21-jre" : Manual Deploy\n(docker build)
+
+note right of pg
+  Credenciais em variáveis de ambiente
+  do Render (POSTGRES_URL/USER/PASS),
+  nunca no repositório.
+end note
+@enduml

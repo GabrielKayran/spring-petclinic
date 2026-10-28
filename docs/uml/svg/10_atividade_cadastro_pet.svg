@@ -5,7 +5,7 @@
  -->
 <!-- Title: G Pages: 1 -->
 <svg width="1747pt" height="2648pt"
- viewBox="0.00 0.00 698.82 1059.32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ viewBox="0.00 0.00 1747.05 2648.30" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(2.5 2.5) rotate(0) translate(20.16 1039.16)">
 <title>G</title>
 <!-- begin -->
@@ -17,7 +17,7 @@
 <g id="node2" class="node">
 <title>recv</title>
 <path fill="#f4faf8" stroke="#bfd0d6" d="M282,-950C282,-950 12,-950 12,-950 6,-950 0,-944 0,-938 0,-938 0,-926 0,-926 0,-920 6,-914 12,-914 12,-914 282,-914 282,-914 288,-914 294,-920 294,-926 294,-926 294,-938 294,-938 294,-944 288,-950 282,-950"/>
-<text text-anchor="middle" x="147" y="-928.5" font-family="DejaVu Sans" font-size="15.00" fill="#203943">POST /owners/{ownerId}/pets/new</text>
+<text text-anchor="middle" x="147" y="-928.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">POST /owners/{ownerId}/pets/new</text>
 </g>
 <!-- begin&#45;&gt;recv -->
 <g id="edge1" class="edge">
@@ -29,7 +29,7 @@
 <g id="node3" class="node">
 <title>val</title>
 <path fill="#f4faf8" stroke="#bfd0d6" d="M259.5,-863C259.5,-863 34.5,-863 34.5,-863 28.5,-863 22.5,-857 22.5,-851 22.5,-851 22.5,-839 22.5,-839 22.5,-833 28.5,-827 34.5,-827 34.5,-827 259.5,-827 259.5,-827 265.5,-827 271.5,-833 271.5,-839 271.5,-839 271.5,-851 271.5,-851 271.5,-857 265.5,-863 259.5,-863"/>
-<text text-anchor="middle" x="147" y="-841.5" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Validar nome, data e campos</text>
+<text text-anchor="middle" x="147" y="-841.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Validar nome, data e campos</text>
 </g>
 <!-- recv&#45;&gt;val -->
 <g id="edge2" class="edge">
@@ -41,8 +41,8 @@
 <g id="node4" class="node">
 <title>decision</title>
 <path fill="#fff4e4" stroke="#c69b5f" d="M136.5,-770.19C136.5,-770.19 63.5,-729.81 63.5,-729.81 58.25,-726.9 58.25,-721.1 63.5,-718.19 63.5,-718.19 136.5,-677.81 136.5,-677.81 141.75,-674.9 152.25,-674.9 157.5,-677.81 157.5,-677.81 230.5,-718.19 230.5,-718.19 235.75,-721.1 235.75,-726.9 230.5,-729.81 230.5,-729.81 157.5,-770.19 157.5,-770.19 152.25,-773.1 141.75,-773.1 136.5,-770.19"/>
-<text text-anchor="middle" x="147" y="-729" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Dados</text>
-<text text-anchor="middle" x="147" y="-712" font-family="DejaVu Sans" font-size="15.00" fill="#203943">válidos?</text>
+<text text-anchor="middle" x="147" y="-729" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Dados</text>
+<text text-anchor="middle" x="147" y="-712" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">válidos?</text>
 </g>
 <!-- val&#45;&gt;decision -->
 <g id="edge3" class="edge">
@@ -54,28 +54,28 @@
 <g id="node5" class="node">
 <title>form</title>
 <path fill="#fff4e4" stroke="#bfd0d6" d="M169.5,-548C169.5,-548 14.5,-548 14.5,-548 8.5,-548 2.5,-542 2.5,-536 2.5,-536 2.5,-508 2.5,-508 2.5,-502 8.5,-496 14.5,-496 14.5,-496 169.5,-496 169.5,-496 175.5,-496 181.5,-502 181.5,-508 181.5,-508 181.5,-536 181.5,-536 181.5,-542 175.5,-548 169.5,-548"/>
-<text text-anchor="middle" x="92" y="-527" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Retornar formulário</text>
-<text text-anchor="middle" x="92" y="-510" font-family="DejaVu Sans" font-size="15.00" fill="#203943">com erros</text>
+<text text-anchor="middle" x="92" y="-527" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Retornar formulário</text>
+<text text-anchor="middle" x="92" y="-510" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">com erros</text>
 </g>
 <!-- decision&#45;&gt;form -->
 <g id="edge4" class="edge">
 <title>decision&#45;&gt;form</title>
 <path fill="none" stroke="#af7932" stroke-width="1.6" d="M134.79,-678.61C124.61,-641.59 110.33,-589.65 101.12,-556.16"/>
 <polygon fill="#af7932" stroke="#af7932" stroke-width="1.6" points="103.71,-555.03 98.89,-548.06 98.31,-556.52 103.71,-555.03"/>
-<text text-anchor="middle" x="137.5" y="-637.4" font-family="DejaVu Sans" font-size="12.00" fill="#576f79">não</text>
+<text text-anchor="middle" x="137.5" y="-637.4" font-family="DejaVu Sans, Verdana, sans-serif" font-size="12.00" fill="#576f79">não</text>
 </g>
 <!-- addPet -->
 <g id="node6" class="node">
 <title>addPet</title>
 <path fill="#f4faf8" stroke="#bfd0d6" d="M345.5,-609C345.5,-609 196.5,-609 196.5,-609 190.5,-609 184.5,-603 184.5,-597 184.5,-597 184.5,-585 184.5,-585 184.5,-579 190.5,-573 196.5,-573 196.5,-573 345.5,-573 345.5,-573 351.5,-573 357.5,-579 357.5,-585 357.5,-585 357.5,-597 357.5,-597 357.5,-603 351.5,-609 345.5,-609"/>
-<text text-anchor="middle" x="271" y="-587.5" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Owner.addPet(pet)</text>
+<text text-anchor="middle" x="271" y="-587.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Owner.addPet(pet)</text>
 </g>
 <!-- decision&#45;&gt;addPet -->
 <g id="edge5" class="edge">
 <title>decision&#45;&gt;addPet</title>
 <path fill="none" stroke="#176749" stroke-width="1.6" d="M178.93,-689.26C200.91,-666.04 229.55,-635.79 249,-615.24"/>
 <polygon fill="#176749" stroke="#176749" stroke-width="1.6" points="251.27,-616.92 254.73,-609.19 247.2,-613.07 251.27,-616.92"/>
-<text text-anchor="middle" x="242" y="-637.4" font-family="DejaVu Sans" font-size="12.00" fill="#576f79">sim</text>
+<text text-anchor="middle" x="242" y="-637.4" font-family="DejaVu Sans, Verdana, sans-serif" font-size="12.00" fill="#576f79">sim</text>
 </g>
 <!-- end -->
 <g id="node12" class="node">
@@ -93,7 +93,7 @@
 <g id="node7" class="node">
 <title>save</title>
 <path fill="#f4faf8" stroke="#bfd0d6" d="M426,-471C426,-471 124,-471 124,-471 118,-471 112,-465 112,-459 112,-459 112,-447 112,-447 112,-441 118,-435 124,-435 124,-435 426,-435 426,-435 432,-435 438,-441 438,-447 438,-447 438,-459 438,-459 438,-465 432,-471 426,-471"/>
-<text text-anchor="middle" x="275" y="-449.5" font-family="DejaVu Sans" font-size="15.00" fill="#203943">OwnerRepository.saveAndFlush(owner)</text>
+<text text-anchor="middle" x="275" y="-449.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">OwnerRepository.saveAndFlush(owner)</text>
 </g>
 <!-- addPet&#45;&gt;save -->
 <g id="edge6" class="edge">
@@ -105,7 +105,7 @@
 <g id="node8" class="node">
 <title>db</title>
 <path fill="#eaf3f8" stroke="#bfd0d6" d="M429,-384C429,-384 129,-384 129,-384 123,-384 117,-378 117,-372 117,-372 117,-360 117,-360 117,-354 123,-348 129,-348 129,-348 429,-348 429,-348 435,-348 441,-354 441,-360 441,-360 441,-372 441,-372 441,-378 435,-384 429,-384"/>
-<text text-anchor="middle" x="279" y="-362.5" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Banco aplica UNIQUE(owner_id, name)</text>
+<text text-anchor="middle" x="279" y="-362.5" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Banco aplica UNIQUE(owner_id, name)</text>
 </g>
 <!-- save&#45;&gt;db -->
 <g id="edge7" class="edge">
@@ -117,8 +117,8 @@
 <g id="node9" class="node">
 <title>duplicate</title>
 <path fill="#fff4e4" stroke="#c69b5f" d="M270.77,-292.77C270.77,-292.77 155.23,-249.23 155.23,-249.23 149.61,-247.12 149.61,-242.88 155.23,-240.77 155.23,-240.77 270.77,-197.23 270.77,-197.23 276.39,-195.12 287.61,-195.12 293.23,-197.23 293.23,-197.23 408.77,-240.77 408.77,-240.77 414.39,-242.88 414.39,-247.12 408.77,-249.23 408.77,-249.23 293.23,-292.77 293.23,-292.77 287.61,-294.88 276.39,-294.88 270.77,-292.77"/>
-<text text-anchor="middle" x="282" y="-250" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Violação</text>
-<text text-anchor="middle" x="282" y="-233" font-family="DejaVu Sans" font-size="15.00" fill="#203943">de unicidade?</text>
+<text text-anchor="middle" x="282" y="-250" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Violação</text>
+<text text-anchor="middle" x="282" y="-233" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">de unicidade?</text>
 </g>
 <!-- db&#45;&gt;duplicate -->
 <g id="edge8" class="edge">
@@ -130,29 +130,29 @@
 <g id="node10" class="node">
 <title>error</title>
 <path fill="#fff4e4" stroke="#bfd0d6" d="M441.5,-130C441.5,-130 122.5,-130 122.5,-130 116.5,-130 110.5,-124 110.5,-118 110.5,-118 110.5,-90 110.5,-90 110.5,-84 116.5,-78 122.5,-78 122.5,-78 441.5,-78 441.5,-78 447.5,-78 453.5,-84 453.5,-90 453.5,-90 453.5,-118 453.5,-118 453.5,-124 447.5,-130 441.5,-130"/>
-<text text-anchor="middle" x="282" y="-109" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Capturar DataIntegrityViolationException</text>
-<text text-anchor="middle" x="282" y="-92" font-family="DejaVu Sans" font-size="15.00" fill="#203943">mostrar nome duplicado</text>
+<text text-anchor="middle" x="282" y="-109" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Capturar DataIntegrityViolationException</text>
+<text text-anchor="middle" x="282" y="-92" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">mostrar nome duplicado</text>
 </g>
 <!-- duplicate&#45;&gt;error -->
 <g id="edge9" class="edge">
 <title>duplicate&#45;&gt;error</title>
 <path fill="none" stroke="#af7932" stroke-width="1.6" d="M282,-192.64C282,-174.46 282,-154.5 282,-138.23"/>
 <polygon fill="#af7932" stroke="#af7932" stroke-width="1.6" points="284.8,-138.09 282,-130.09 279.2,-138.09 284.8,-138.09"/>
-<text text-anchor="middle" x="293" y="-158.4" font-family="DejaVu Sans" font-size="12.00" fill="#576f79">sim</text>
+<text text-anchor="middle" x="293" y="-158.4" font-family="DejaVu Sans, Verdana, sans-serif" font-size="12.00" fill="#576f79">sim</text>
 </g>
 <!-- success -->
 <g id="node11" class="node">
 <title>success</title>
 <path fill="#f4faf8" stroke="#bfd0d6" d="M646.5,-130C646.5,-130 505.5,-130 505.5,-130 499.5,-130 493.5,-124 493.5,-118 493.5,-118 493.5,-90 493.5,-90 493.5,-84 499.5,-78 505.5,-78 505.5,-78 646.5,-78 646.5,-78 652.5,-78 658.5,-84 658.5,-90 658.5,-90 658.5,-118 658.5,-118 658.5,-124 652.5,-130 646.5,-130"/>
-<text text-anchor="middle" x="576" y="-109" font-family="DejaVu Sans" font-size="15.00" fill="#203943">Redirecionar para</text>
-<text text-anchor="middle" x="576" y="-92" font-family="DejaVu Sans" font-size="15.00" fill="#203943">detalhes do tutor</text>
+<text text-anchor="middle" x="576" y="-109" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">Redirecionar para</text>
+<text text-anchor="middle" x="576" y="-92" font-family="DejaVu Sans, Verdana, sans-serif" font-size="15.00" fill="#203943">detalhes do tutor</text>
 </g>
 <!-- duplicate&#45;&gt;success -->
 <g id="edge10" class="edge">
 <title>duplicate&#45;&gt;success</title>
 <path fill="none" stroke="#176749" stroke-width="1.6" d="M342.2,-215.54C392.8,-191.61 464.78,-157.59 515.47,-133.62"/>
 <polygon fill="#176749" stroke="#176749" stroke-width="1.6" points="516.75,-136.11 522.79,-130.16 514.36,-131.05 516.75,-136.11"/>
-<text text-anchor="middle" x="474.5" y="-158.4" font-family="DejaVu Sans" font-size="12.00" fill="#576f79">não</text>
+<text text-anchor="middle" x="474.5" y="-158.4" font-family="DejaVu Sans, Verdana, sans-serif" font-size="12.00" fill="#576f79">não</text>
 </g>
 <!-- error&#45;&gt;end -->
 <g id="edge12" class="edge">
