@@ -4,6 +4,7 @@ Material de apoio para o grupo. Detalhes técnicos de cada extensão estão no [
 e os diagramas, em [docs/uml](docs/uml/README.md).
 
 - **Site:** `https://petclinic-poo2.onrender.com/painel` (menu "Estudo de caso")
+- **Slides da teoria (29 slides, com notas do apresentador):** https://claude.ai/artifact/E6QxzjL5bopc1RdBjEyAuc
 - **Formato:** 70 min de teoria (terça) + 70 min de prática (quinta), com tolerância de ±10 min
 - **Nota de cada dia (35 pts):** 10 tempo · 10 qualidade e aderência ao tema · **15 domínio do assunto**
 
@@ -32,7 +33,7 @@ Todos precisam saber responder sobre todas as partes. A nota de domínio é do g
 
 | Min | Quem | Bloco | Conteúdo e o que mostrar |
 |---|---|---|---|
-| 0–5 | P1 | Abertura | O que é um estudo de caso; por que o PetClinic (sistema real, referência do Spring desde 2003); a tese acima; os itens 7.1–7.3 |
+| 0–5 | P1 | Abertura | O que é um estudo de caso; por que o PetClinic (aplicação de referência oficial do Spring, mantida pelo time do framework); a tese acima; os itens 7.1–7.3 |
 | 5–15 | P1 | O sistema | Domínio (UML 01 e 02), arquitetura MVC + camadas (UML 03), implantação (UML 11). Frameworks do tópico 4: Spring MVC (sucessor do Struts), Hibernate/JPA, JUnit, JasperReports. Stack: Java 21, Spring Boot 4.1, PostgreSQL no Neon, Docker no Render |
 | 15–27 | P1 | RMI → gRPC | Camadas do RMI (stub, skeleton, Registry/naming); limitações (só Java, serialização Java insegura, firewall); gRPC = mesmo conceito de stub, contrato `.proto` neutro, Protobuf + HTTP/2. Padrões **Proxy** (stub) e **Broker** |
 | 27–32 | P1 | Genéricos | Classes e métodos genéricos no código (`Repository<Vet, Integer>`); *type erasure*; tipos brutos; curingas |
