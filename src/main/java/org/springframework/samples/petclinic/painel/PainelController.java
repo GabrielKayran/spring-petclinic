@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.painel;
 
+import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -25,12 +26,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.sql.DataSource;
 
 import org.springframework.aop.support.AopUtils;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
@@ -40,11 +44,13 @@ import org.springframework.samples.petclinic.auditoria.Auditado;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerRepository;
 import org.springframework.samples.petclinic.owner.Pet;
+import org.springframework.samples.petclinic.owner.PetTypeRepository;
 import org.springframework.samples.petclinic.painel.BenchmarkDemo.ResultadoBenchmark;
 import org.springframework.samples.petclinic.painel.GrpcDemoCliente.ResultadoGrpc;
 import org.springframework.samples.petclinic.painel.PainelLogAppender.LinhaDeLog;
 import org.springframework.samples.petclinic.preco.PrecoConsultaService;
 import org.springframework.samples.petclinic.preco.PrecoConsultaStrategy;
+import org.springframework.samples.petclinic.vet.VetRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ClassUtils;
@@ -198,6 +204,51 @@ class PainelController {
 		}
 		resultado.sort(Comparator.comparing(ControllerAop::proxy).reversed().thenComparing(ControllerAop::bean));
 		return resultado;
+	}
+
+	// ---------- Tópico 1 da disciplina: programação genérica ----------
+
+	record Genericos(String classeDeListString, String classeDeListInteger, boolean mesmaClasse,
+			List<String> repositorios, String injecaoPorTipoGenerico, int estrategiasInjetadas,
+			String vetRepositoryEmTempoDeExecucao) {
+	}
+
+	/**
+	 * Mostra o <i>type erasure</i>: em tempo de execução, {@code List<String>} e
+	 * {@code List<Integer>} são a mesma classe. Mas o tipo genérico continua gravado nas
+	 * <b>assinaturas</b> (interfaces, parâmetros), e o Spring lê essa informação por
+	 * reflexão para decidir o que injetar e para gerar os repositórios.
+	 */
+	@GetMapping("/api/painel/genericos")
+	@ResponseBody
+	Genericos genericos() {
+		List<String> nomes = new ArrayList<>();
+		List<Integer> numeros = new ArrayList<>();
+
+		List<String> repositorios = Stream.of(OwnerRepository.class, PetTypeRepository.class, VetRepository.class)
+			.map(repositorio -> repositorio.getSimpleName() + " extends "
+					+ nomeCurto(ResolvableType.forClass(repositorio).getInterfaces()[0]))
+			.toList();
+
+		Constructor<?> construtor = PrecoConsultaService.class.getConstructors()[0];
+		String injecao = "PrecoConsultaService(" + nomeCurto(ResolvableType.forConstructorParameter(construtor, 0))
+				+ ")";
+
+		return new Genericos(nomes.getClass().getName(), numeros.getClass().getName(),
+				nomes.getClass() == numeros.getClass(), repositorios, injecao,
+				this.contexto.getBeansOfType(PrecoConsultaStrategy.class).size(),
+				this.contexto.getBean(VetRepository.class).getClass().getName());
+	}
+
+	/** {@code Map<String, PrecoConsultaStrategy>} em vez do nome completo com pacotes. */
+	private static String nomeCurto(ResolvableType tipo) {
+		String nome = tipo.toClass().getSimpleName();
+		if (!tipo.hasGenerics()) {
+			return nome;
+		}
+		return nome + Arrays.stream(tipo.getGenerics())
+			.map(PainelController::nomeCurto)
+			.collect(Collectors.joining(", ", "<", ">"));
 	}
 
 	// ---------- Console ao vivo ----------

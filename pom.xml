@@ -273,6 +273,28 @@
         <groupId>io.github.ascopes</groupId>
         <artifactId>protobuf-maven-plugin</artifactId>
       </plugin>
+      <!-- Painel: copia os diagramas UML do grupo (docs/uml/svg) para /uml/*.svg, sem duplicar arquivos no Git -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copiar-uml-para-o-painel</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/static/uml</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>docs/uml/svg</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <!-- Extensão 1: roda o cliente gRPC de linha de comando em uma JVM separada do servidor.
         Uso, com a aplicação no ar: ./mvnw -q exec:java@cliente-grpc (sem "compile": recompilar faria o
         DevTools reiniciar a aplicação e derrubar o gRPC por alguns segundos) -->

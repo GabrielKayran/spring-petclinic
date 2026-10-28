@@ -64,6 +64,13 @@ dependencies {
   checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
 }
 
+// Painel: mesmos diagramas UML que o Maven copia para /uml/*.svg
+tasks.named('processResources') {
+  from('docs/uml/svg') {
+    into 'static/uml'
+  }
+}
+
 tasks.named('test') {
   useJUnitPlatform()
 }

@@ -94,6 +94,22 @@ class PainelControllerTests {
 	}
 
 	@Test
+	void genericosMostramTypeErasureETiposNasAssinaturas() throws Exception {
+		this.mockMvc.perform(get("/api/painel/genericos"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.mesmaClasse").value(true))
+			.andExpect(jsonPath("$.repositorios").value(hasItem("VetRepository extends Repository<Vet, Integer>")))
+			.andExpect(jsonPath("$.injecaoPorTipoGenerico")
+				.value("PrecoConsultaService(Map<String, PrecoConsultaStrategy>)"))
+			.andExpect(jsonPath("$.estrategiasInjetadas").value(3));
+	}
+
+	@Test
+	void diagramasUmlSaoServidosParaOPainel() throws Exception {
+		this.mockMvc.perform(get("/uml/05_classes_strategy.svg")).andExpect(status().isOk());
+	}
+
+	@Test
 	void consoleRecebeLogDoAspecto() throws Exception {
 		this.mockMvc.perform(get("/vets")).andExpect(status().isOk());
 

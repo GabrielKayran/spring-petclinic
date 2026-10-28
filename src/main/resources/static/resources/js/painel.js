@@ -146,11 +146,13 @@
     </div>
 
     <nav class="pn-nav">
+      <a href="#mapa">Mapa da disciplina</a>
       <a href="#ext1">1. RMI &rarr; gRPC</a>
       <a href="#ext2">2. Virtual Threads</a>
       <a href="#ext3">3. Observer + @Async</a>
       <a href="#ext4">4. Strategy</a>
       <a href="#ext5">5. AOP @Auditado</a>
+      <a href="#uml">UML</a>
     </nav>
 
     <div class="pn-grid">
@@ -165,6 +167,68 @@
     </div>`;
 
   const cartoes = document.getElementById('pn-cartoes');
+
+  // ---------- Mapa da disciplina: plano de ensino x código ----------
+
+  /** Linhas de tabela: cada item é uma lista de células (HTML já escapado). */
+  function tabela(cabecalho, linhas) {
+    return '<table class="pn-tabela"><tr>' + cabecalho.map((c) => '<th>' + c + '</th>').join('') + '</tr>' +
+      linhas.map((l) => '<tr>' + l.map((c) => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</table>';
+  }
+
+  const TOPICOS = [
+    ['1. Programação genérica', '<code>Repository&lt;Vet, Integer&gt;</code>, <code>Map&lt;String, PrecoConsultaStrategy&gt;</code>, <code>StreamObserver&lt;T&gt;</code>', 'demo logo abaixo'],
+    ['2. Multithreading', 'virtual threads, <code>ExecutorService</code>, tarefas <code>Callable</code>/<code>Future</code>, <code>Semaphore</code> (sincronização), <code>@Async</code>', '<a href="#ext2">card 2</a>, <a href="#ext3">card 3</a>'],
+    ['3. RMI', '<code>demos/rmi</code>: interface <code>Remote</code>, stub, Registry :1099 &rarr; sucessor gRPC', '<a href="#ext1">card 1</a>'],
+    ['4. Frameworks (MVC, dados, testes)', 'Spring MVC (sucessor do Struts), JPA/Hibernate, JUnit 5 (99 testes). Relatórios (Jasper) não fazem parte do projeto', 'todo o sistema'],
+    ['5. Princípios e padrões', 'Strategy, Observer, Proxy, Template Method, Builder, MVC, Broker... e SOLID', '<a href="#ext3">3</a>, <a href="#ext4">4</a>, <a href="#ext5">5</a> e tabela abaixo'],
+    ['6. Aspectos', 'concern, pointcut, advice, join point, weaving: <code>@Auditado</code> + <code>AuditoriaAspect</code>', '<a href="#ext5">card 5</a>'],
+    ['7.1 Aplicação integrada', 'as 5 extensões rodando juntas no mesmo PetClinic', 'esta página'],
+    ['7.2 Persistência', 'PostgreSQL no Neon via JPA/Hibernate (veja o cabeçalho)', 'cabeçalho'],
+    ['7.3 UML', '10 diagramas: casos de uso, classes, componentes, sequência, implantação, atividade', '<a href="#uml">galeria UML</a>']
+  ];
+
+  const PADROES = [
+    ['Strategy', 'GoF comportamental', '<code>preco/PrecoConsulta*</code>', 'algoritmo de preço trocável, escolhido por um Map injetado'],
+    ['Observer', 'GoF comportamental', '<code>lembrete/*</code> + <code>ApplicationEventPublisher</code>', 'o sujeito publica; os observadores reagem sem serem conhecidos'],
+    ['Template Method', 'GoF comportamental', '<code>PainelLogAppender extends AppenderBase</code>', '<code>doAppend()</code> é o esqueleto fixo; nós só preenchemos <code>append()</code>'],
+    ['Command', 'GoF comportamental', 'tarefas enviadas ao <code>ExecutorService</code> (<code>BenchmarkDemo</code>)', 'a ação vira objeto e roda depois, em outra thread'],
+    ['Proxy', 'GoF estrutural', 'stubs RMI/gRPC, proxies CGLIB do AOP, <code>VetRepository</code> sem implementação', 'um substituto controla o acesso ao objeto real'],
+    ['Adapter', 'GoF estrutural', '<code>VeterinarioGrpcService.paraMensagem()</code>', 'converte a entidade JPA <code>Vet</code> na mensagem Protobuf'],
+    ['Builder', 'GoF criacional', '<code>Veterinario.newBuilder()...build()</code>, <code>ManagedChannelBuilder</code>', 'monta objetos imutáveis passo a passo'],
+    ['Factory Method', 'GoF criacional', '<code>Executors.newVirtualThreadPerTaskExecutor()</code>, <code>newBlockingStub()</code>', 'quem chama não sabe qual classe concreta é criada'],
+    ['Singleton', 'GoF criacional', 'beans do Spring (escopo padrão)', 'uma instância por contexto, garantida pelo container'],
+    ['MVC / Layers', 'arquitetural', 'controllers &rarr; repositories &rarr; banco; views Thymeleaf', 'camadas com dependência em um só sentido'],
+    ['Broker', 'arquitetural', 'RMI Registry / gRPC', 'cliente e servidor se comunicam por um intermediário de rede']
+  ];
+
+  const SOLID = [
+    ['SRP', '<code>LembreteVisitaListener</code> só envia lembrete; <code>AuditoriaAspect</code> só audita'],
+    ['OCP', 'tipo de pet novo = classe nova <code>@Component("hamster")</code>, sem editar nada'],
+    ['LSP', 'qualquer <code>PrecoConsultaStrategy</code> substitui outra no serviço'],
+    ['ISP', '<code>VetRepository</code> estende o marcador <code>Repository</code> e expõe só <code>findAll</code>, não os ~20 métodos de <code>JpaRepository</code>'],
+    ['DIP', '<code>VisitController</code> depende de <code>ApplicationEventPublisher</code> (abstração), nunca do listener'],
+    ['ADP (pacotes)', 'sem ciclos: <code>painel</code> &rarr; extensões &rarr; núcleo; nenhuma extensão depende do painel']
+  ];
+
+  cartoes.insertAdjacentHTML('beforeend', `
+    <section class="pn-card" id="mapa">
+      <h2><span class="pn-num">0</span> Mapa da disciplina <span class="pn-tag">plano de ensino &rarr; código</span></h2>
+      <p class="pn-porque">O tópico 7 pede uma aplicação que use <b>princípios e padrões, multithreading, RMI e frameworks</b> (7.1),
+        com <b>persistência em banco</b> (7.2) e <b>documentada em UML</b> (7.3). Cada linha aponta onde isso aparece neste sistema.</p>
+      <div class="pn-corpo">
+        <div class="pn-box"><h3>Tópicos do plano de ensino</h3>${tabela(['Tópico', 'Onde aparece', 'Ver'], TOPICOS)}</div>
+        <div class="pn-box pn-demo">
+          <h3>Demo ao vivo: genéricos e <i>type erasure</i></h3>
+          <div class="pn-acoes"><button class="btn btn-primary btn-sm" id="pn-genericos">Inspecionar genéricos em tempo de execução</button></div>
+          <div class="pn-resultado" id="pn-genericos-resultado"><span class="pn-vazio">O tipo genérico some dos objetos, mas continua nas assinaturas, e o Spring o lê para injetar dependências.</span></div>
+        </div>
+        <div class="pn-box"><h3>Padrões de projeto e arquiteturais no código</h3>${tabela(['Padrão', 'Categoria', 'Onde', 'O que mostrar'], PADROES)}</div>
+        <div class="pn-box"><h3>Princípios SOLID e de pacotes</h3>${tabela(['Princípio', 'Exemplo no código'], SOLID)}
+          <p class="small text-muted mt-2 mb-0"><b>Anti-padrões evitados:</b> cadeia de <code>if/switch</code> por tipo (&rarr; Strategy) e log espalhado em todos os métodos, o <i>scattering/tangling</i> (&rarr; AOP).</p>
+        </div>
+      </div>
+    </section>`);
 
   // ---------- Extensão 1 ----------
   cartoes.insertAdjacentHTML('beforeend', cartao('ext1', 1, 'Chamada remota de métodos', 'RMI', 'gRPC',
@@ -264,6 +328,35 @@
      </div>
      <div class="pn-resultado" id="pn-aop-resultado"><span class="pn-vazio">As linhas [AUDITORIA] geradas aparecem aqui e no console.</span></div>`,
     ['auditoria/Auditado.java', 'auditoria/AuditoriaAspect.java', 'OwnerController / VisitController / VetController (só a anotação)']));
+
+  // ---------- Galeria UML (item 7.3), com os diagramas de docs/uml/svg ----------
+
+  const DIAGRAMAS_UML = [
+    ['01_casos_de_uso', 'Casos de uso', 'requisitos'],
+    ['02_classes_dominio', 'Classes do domínio', 'análise'],
+    ['03_componentes_arquitetura', 'Componentes da arquitetura', 'arquitetura'],
+    ['04_sequencia_registro_visita', 'Sequência: registro de visita', 'comportamento'],
+    ['05_classes_strategy', 'Classes: Strategy', 'projeto'],
+    ['06_classes_observer', 'Classes: Observer', 'projeto'],
+    ['07_classes_aop', 'Classes: Spring AOP', 'projeto'],
+    ['08_sequencia_grpc', 'Sequência: gRPC', 'comportamento'],
+    ['09_implantacao_execucao_local', 'Implantação', 'implantação'],
+    ['10_atividade_cadastro_pet', 'Atividade: cadastro de pet', 'comportamento']
+  ];
+
+  cartoes.insertAdjacentHTML('beforeend', `
+    <section class="pn-card" id="uml">
+      <h2><span class="pn-num">U</span> Documentação UML <span class="pn-tag">item 7.3 do plano</span></h2>
+      <p class="pn-porque">Dez diagramas cobrindo requisitos, análise, arquitetura, projeto, comportamento e implantação.
+        Clique para abrir em tamanho real. As fontes PlantUML estão em <code>docs/uml/puml</code>.</p>
+      <div class="pn-uml">
+        ${DIAGRAMAS_UML.map(([arquivo, titulo, fase]) => `
+          <a href="/uml/${arquivo}.svg" target="_blank" rel="noopener">
+            <img src="/uml/${arquivo}.svg" alt="${titulo}" loading="lazy">
+            <span><b>${arquivo.slice(0, 2)}</b> ${titulo} <span class="pn-tag">${fase}</span></span>
+          </a>`).join('')}
+      </div>
+    </section>`);
 
   // ---------------------------------------------------------------------------
   // Console ao vivo: busca novas linhas de log a cada segundo
@@ -526,6 +619,30 @@
         }
       }, 2500);
     });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Tópico 1: genéricos
+  // ---------------------------------------------------------------------------
+
+  document.getElementById('pn-genericos').addEventListener('click', async () => {
+    const alvo = document.getElementById('pn-genericos-resultado');
+    try {
+      const g = await getJson('/api/painel/genericos');
+      alvo.innerHTML = `
+        <p class="mb-1"><b>1. Type erasure:</b> <code>new ArrayList&lt;String&gt;().getClass() == new ArrayList&lt;Integer&gt;().getClass()</code>
+          &rarr; <span class="pn-badge ${g.mesmaClasse ? 'pn-ok' : 'pn-nao'}">${g.mesmaClasse}</span>
+          <span class="small text-muted">(as duas são <code>${esc(g.classeDeListString)}</code>; o compilador apaga o tipo)</span></p>
+        <p class="mb-1"><b>2. Mas o tipo fica nas assinaturas.</b> O Spring Data lê o genérico de cada interface:</p>
+        <pre class="pn-codigo">${g.repositorios.map(esc).join('\n')}</pre>
+        <p class="mb-1 mt-2"><b>3. E injeta por tipo genérico:</b> <code>${esc(g.injecaoPorTipoGenerico)}</code>
+          recebeu <b>${g.estrategiasInjetadas}</b> beans, porque só eles combinam com o tipo do valor do Map.</p>
+        <p class="mb-0"><b>4. Proxy gerado:</b> <code>VetRepository</code> não tem classe de implementação. Em tempo de execução ele é
+          <code>${esc(g.vetRepositoryEmTempoDeExecucao)}</code>, criado a partir de <code>Repository&lt;Vet, Integer&gt;</code>.</p>`;
+    }
+    catch (e) {
+      erro(alvo, e);
+    }
   });
 
   // ---------------------------------------------------------------------------

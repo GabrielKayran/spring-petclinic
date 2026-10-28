@@ -41,6 +41,38 @@
   gap: 1rem;
 }
 
+/* Galeria UML */
+.pn-uml {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: .75rem;
+}
+
+.pn-uml a {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  border: 1px solid var(--pn-borda);
+  border-radius: 10px;
+  padding: .5rem;
+  background: #fff;
+  text-decoration: none;
+  color: var(--pn-verde-escuro);
+  font-size: .85rem;
+}
+
+.pn-uml a:hover {
+  border-color: var(--pn-verde);
+}
+
+.pn-uml img {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
 .pn-demo {
   background: #fff;
   border-color: #cfe3c0;
