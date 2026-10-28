@@ -18,7 +18,10 @@ package org.springframework.samples.petclinic.painel;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.grpc.server.lifecycle.GrpcServerStartedEvent;
 import org.springframework.samples.petclinic.grpc.proto.ListarVeterinariosRequest;
@@ -41,6 +44,8 @@ import tools.jackson.databind.json.JsonMapper;
 @Component
 class GrpcDemoCliente implements DisposableBean {
 
+	private static final Logger log = LoggerFactory.getLogger(GrpcDemoCliente.class);
+
 	private final JsonMapper jsonMapper;
 
 	private volatile int porta = -1;
@@ -62,8 +67,30 @@ class GrpcDemoCliente implements DisposableBean {
 	 * O servidor gRPC avisa em qual porta subiu (9090, ou uma porta livre nos testes).
 	 */
 	@EventListener
-	void servidorGrpcIniciado(GrpcServerStartedEvent evento) {
+	synchronized void servidorGrpcIniciado(GrpcServerStartedEvent evento) {
+		// Se o servidor reiniciar em outra porta, o canal antigo aponta para o lugar
+		// errado
+		if (this.canal != null && evento.getPort() != this.porta) {
+			this.canal.shutdownNow();
+			this.canal = null;
+		}
 		this.porta = evento.getPort();
+	}
+
+	/**
+	 * Aquece o canal assim que a aplicação fica pronta. A primeira chamada paga o custo
+	 * de abrir a conexão HTTP/2 e de compilar o código (no Render, cerca de 5 s). Sem
+	 * isso, a primeira demonstração ao vivo mostraria esse tempo em vez dos poucos
+	 * milissegundos de uma chamada normal.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
+	void aquecerCanal() {
+		try {
+			listarVeterinarios();
+		}
+		catch (RuntimeException ex) {
+			log.warn("Não foi possível aquecer o canal gRPC: {}", ex.getMessage());
+		}
 	}
 
 	ResultadoGrpc listarVeterinarios() {
