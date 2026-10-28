@@ -62,7 +62,7 @@ Mantenham o **console ao vivo** do painel visível o tempo todo: é ele que prov
 | 33–42 | P2 | Card 3 (Observer) | Registrar visita: a resposta volta em menos de 0,5 s e "lembrete enviado" aparece **+2.000 ms** depois em `task-N`. Abrir `VisitController` e mostrar a única linha nova, o `publishEvent` |
 | 42–50 | P3 | Card 4 (Strategy) + live coding | Tabela de preços; link "tela" da Rosy (**R$ 225,00**). **Live coding** (abaixo): criar a estratégia do hamster, local |
 | 50–55 | P3 | Card 5 (AOP) | Tabela de proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada. Abrir `AuditoriaAspect` |
-| 55–59 | P3 | Card 6 (Relatório) | "Gerar relatório PDF": pets agrupados por tipo, estratégia e preço (total **R$ 1.640,00**). O console mostra o `[AUDITORIA]` do relatório: cerca de 3 s na 1ª vez (compila o `.jrxml`), cerca de 150 ms depois. Abrir `pets-e-precos.jrxml` |
+| 55–59 | P3 | Card 6 (Relatório) | "Gerar relatório PDF": pets agrupados por tipo, estratégia e preço (total **R$ 1.640,00**). O console mostra o `[AUDITORIA]` do relatório: cerca de 1 s no Render (o `.jrxml` é compilado quando a aplicação sobe). Abrir `pets-e-precos.jrxml` |
 | 59–63 | P3 | Galeria UML + testes | Card UML (11 diagramas): rastrear diagrama → código. Terminal: `./mvnw test` → **103 testes, 0 falhas** |
 | 63–70 | todos | Perguntas | Usar a lista de perguntas prováveis abaixo |
 
