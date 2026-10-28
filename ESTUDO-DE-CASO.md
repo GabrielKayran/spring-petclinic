@@ -12,6 +12,7 @@ Em cada uma mostramos a **tecnologia clássica** ensinada na disciplina e o seu 
 | 4 | Padrão Strategy | `...petclinic.preco` | `extensao/4-strategy` |
 | 5 | AOP próprio (`@Auditado`) | `...petclinic.auditoria` | `extensao/5-aop-auditoria` |
 | + | **Painel `/painel`** (vitrine ao vivo das 5) + deploy no Render | `...petclinic.painel`, `Dockerfile`, `render.yaml` | `extensao/6-painel-render` |
+| + | **Relatórios PDF** com JasperReports (tópico 4.4 do plano) | `...petclinic.relatorio`, `relatorios/pets-e-precos.jrxml` | `main` |
 
 As branches 1 a 5 saem do mesmo commit base (atualização para Java 21) e não dependem umas
 das outras. O painel depende de todas, porque só exibe o que elas fazem. A branch `estudo-de-caso` juntou tudo e foi mesclada na `main`, que é a branch usada no deploy.
@@ -585,7 +586,7 @@ Abra o `/painel`. **Mostrar** o cabeçalho com o ambiente: Java 21, Spring Boot 
 ./mvnw test
 ```
 
-Mostrar `Tests run: 101, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
+Mostrar `Tests run: 103, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
 Os 2 pulados são os de MySQL via Testcontainers, que exigem o Docker em execução.
 
 | Extensão | Teste | O que prova |
@@ -595,6 +596,7 @@ Os 2 pulados são os de MySQL via Testcontainers, que exigem o Docker em execuç
 | 3 | `lembrete/VisitaRegistradaEventTests` | O POST da visita publica o evento com os dados corretos e o listener roda em outra thread |
 | 4 | `preco/PrecoConsultaServiceTests`, `preco/PrecoConsultaTelaTests` | Cada tipo de pet usa sua estratégia, e o preço aparece no HTML |
 | 5 | `auditoria/AuditoriaAspectTests` | Os controllers viraram proxies AOP e o log traz método, argumentos e tempo |
+| Relatórios | `relatorio/RelatorioControllerTests` | O JasperReports compila o `.jrxml`, preenche com os pets do banco (ordenados por tipo, com a estratégia do Strategy) e exporta um PDF válido |
 | Painel | `painel/PainelControllerTests` | A página e cada endpoint da API (`ambiente`, `grpc`, `pets`, `aop`, `genericos`, `benchmark`, `logs`) respondem, e os diagramas UML são servidos em `/uml` |
 
 ---

@@ -33,7 +33,7 @@ Todos precisam saber responder sobre todas as partes. A nota de domínio é do g
 | Min | Quem | Bloco | Conteúdo e o que mostrar |
 |---|---|---|---|
 | 0–5 | P1 | Abertura | O que é um estudo de caso; por que o PetClinic (sistema real, referência do Spring desde 2003); a tese acima; os itens 7.1–7.3 |
-| 5–15 | P1 | O sistema | Domínio (UML 01 e 02), arquitetura MVC + camadas (UML 03), stack: Java 21, Spring Boot 4.1, Hibernate/JPA, PostgreSQL no Neon, Docker no Render |
+| 5–15 | P1 | O sistema | Domínio (UML 01 e 02), arquitetura MVC + camadas (UML 03), implantação (UML 11). Frameworks do tópico 4: Spring MVC (sucessor do Struts), Hibernate/JPA, JUnit, JasperReports. Stack: Java 21, Spring Boot 4.1, PostgreSQL no Neon, Docker no Render |
 | 15–27 | P1 | RMI → gRPC | Camadas do RMI (stub, skeleton, Registry/naming); limitações (só Java, serialização Java insegura, firewall); gRPC = mesmo conceito de stub, contrato `.proto` neutro, Protobuf + HTTP/2. Padrões **Proxy** (stub) e **Broker** |
 | 27–32 | P1 | Genéricos | Classes e métodos genéricos no código (`Repository<Vet, Integer>`); *type erasure*; tipos brutos; curingas |
 | 32–45 | P2 | Multithreading | Estados de uma thread; thread de plataforma = thread do SO; pool fixo; sincronização (`Semaphore`); `Callable`/`Future`; virtual threads (Java 21): desmontam da *carrier* ao bloquear |
@@ -59,9 +59,10 @@ Mantenham o **console ao vivo** do painel visível o tempo todo: é ele que prov
 | 22–25 | P1 | Card 0 (Genéricos) | Botão "Inspecionar": `ArrayList == ArrayList → true`, mas o Spring lê `Map<String, PrecoConsultaStrategy>` e injeta 3 beans |
 | 25–33 | P2 | Benchmark | Terminal: `java BenchmarkThreads.java 2000` (cerca de 10 s × 1 s). Card 2: rodar **2.000 tarefas** no servidor (**≈ 10.000 ms × 1.000 ms**) e clicar em `GET /thread` (carrier `ForkJoinPool`) |
 | 33–42 | P2 | Card 3 (Observer) | Registrar visita: a resposta volta em menos de 0,5 s e "lembrete enviado" aparece **+2.000 ms** depois em `task-N`. Abrir `VisitController` e mostrar a única linha nova, o `publishEvent` |
-| 42–52 | P3 | Card 4 (Strategy) + live coding | Tabela de preços; link "tela" da Rosy (**R$ 225,00**). **Live coding** (abaixo): criar a estratégia do hamster, local |
-| 52–58 | P3 | Card 5 (AOP) | Tabela de proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada. Abrir `AuditoriaAspect` |
-| 58–63 | P3 | Galeria UML + testes | Card UML: rastrear diagrama → código. Terminal: `./mvnw test` → **101 testes, 0 falhas** |
+| 42–50 | P3 | Card 4 (Strategy) + live coding | Tabela de preços; link "tela" da Rosy (**R$ 225,00**). **Live coding** (abaixo): criar a estratégia do hamster, local |
+| 50–55 | P3 | Card 5 (AOP) | Tabela de proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada. Abrir `AuditoriaAspect` |
+| 55–59 | P3 | Card 6 (Relatório) | "Gerar relatório PDF": pets agrupados por tipo, estratégia e preço (total **R$ 1.640,00**). O console mostra o `[AUDITORIA]` do relatório: cerca de 3 s na 1ª vez (compila o `.jrxml`), cerca de 150 ms depois. Abrir `pets-e-precos.jrxml` |
+| 59–63 | P3 | Galeria UML + testes | Card UML (11 diagramas): rastrear diagrama → código. Terminal: `./mvnw test` → **103 testes, 0 falhas** |
 | 63–70 | todos | Perguntas | Usar a lista de perguntas prováveis abaixo |
 
 ### Live coding: Strategy e o princípio Aberto/Fechado (cerca de 3 min, local)
@@ -151,8 +152,14 @@ só a configuração, sem mudar código (o JPA abstrai o banco).
 atualizada e expôs dados de cerca de 147 milhões de pessoas. É um argumento a favor de frameworks mantidos e
 atualizados.
 
-**E relatórios (JasperReports, item 4.4)?** Não fazem parte deste sistema. Respondam com honestidade: o projeto
-cobre MVC, dados e testes. Relatórios seriam uma extensão futura, por exemplo um PDF de visitas.
+**Como funciona o relatório (JasperReports, item 4.4)?** Três passos: **compilar** o layout `.jrxml` (o arquivo
+que o iReport, hoje Jaspersoft Studio, edita visualmente) em um `JasperReport`; **preencher** com os dados
+(`JRBeanCollectionDataSource`, que lê os getters de `LinhaRelatorio`); **exportar** para PDF. O layout tem
+`parameter`, `field`, `variable` (somas) e bandas (title, detail, groupHeader/groupFooter, summary). O relatório
+não calcula preço: recebe as linhas prontas do `PrecoConsultaService` (Strategy). Compilamos uma vez e guardamos.
+
+**O Jasper é "clássico" ou "moderno"?** O motor continua sendo o padrão no Java (versão 7, de 2025). O que ficou
+para trás foi o editor iReport, substituído pelo Jaspersoft Studio, e o formato antigo do `.jrxml`.
 
 **Vocês desenvolveram o sistema?** O núcleo é o PetClinic original. As cinco extensões, o painel, o deploy e a UML
 são do grupo, e o histórico do Git mostra uma branch e commits por extensão. O README da UML já faz essa distinção.
@@ -161,9 +168,13 @@ são do grupo, e o histórico do Git mostra uma branch e commits por extensão. 
 
 ## Pendências do grupo
 
-- [ ] **João:** os diagramas **03** e **09** mostram o H2 como banco principal e o Neon como "opcional". Na
-  apresentação o sistema roda no **Render + Neon (PostgreSQL)**. Vale atualizar o 09 (nó Render com o
-  container Docker, nó Neon) e gerar o SVG de novo. A galeria do painel pega o arquivo novo no próximo deploy.
+- [x] **UML:** o 03 mostra o PostgreSQL (Neon) e o componente de relatórios; o 09 ficou como "execução local";
+  novo diagrama **11 (produção: Render + Neon)**. Também foram corrigidos os estereótipos `<<<<x>>>>` (05, 06, 07)
+  e o `viewBox` dos SVGs do Graphviz, que no navegador mostravam só parte do diagrama. Detalhes no histórico de
+  revisões do `docs/uml/README.md`. **João, confira se concorda com as mudanças.**
+- [x] **Relatórios (item 4.4):** implementado com JasperReports (card 6 do painel).
+- [ ] **Data da apresentação:** o cronograma marca "Estudo de caso" nas semanas 9 (27 e 29/10) e 11 (10 e 12/11).
+  Confirmar com o professor.
 - [ ] **Senha do Neon:** trocar depois da apresentação, porque ela circulou em conversas.
 - [ ] **Render:** após cada push, fazer **Manual Deploy → Deploy latest commit**. O serviço foi criado a partir
   da URL pública do repositório e não faz deploy automático.
