@@ -585,7 +585,7 @@ Abra o `/painel`. **Mostrar** o cabeçalho com o ambiente: Java 21, Spring Boot 
 ./mvnw test
 ```
 
-Mostrar `Tests run: 99, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
+Mostrar `Tests run: 101, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
 Os 2 pulados são os de MySQL via Testcontainers, que exigem o Docker em execução.
 
 | Extensão | Teste | O que prova |
@@ -595,7 +595,7 @@ Os 2 pulados são os de MySQL via Testcontainers, que exigem o Docker em execuç
 | 3 | `lembrete/VisitaRegistradaEventTests` | O POST da visita publica o evento com os dados corretos e o listener roda em outra thread |
 | 4 | `preco/PrecoConsultaServiceTests`, `preco/PrecoConsultaTelaTests` | Cada tipo de pet usa sua estratégia, e o preço aparece no HTML |
 | 5 | `auditoria/AuditoriaAspectTests` | Os controllers viraram proxies AOP e o log traz método, argumentos e tempo |
-| Painel | `painel/PainelControllerTests` | A página e cada endpoint da API (`ambiente`, `grpc`, `pets`, `aop`, `benchmark`, `logs`) respondem corretamente |
+| Painel | `painel/PainelControllerTests` | A página e cada endpoint da API (`ambiente`, `grpc`, `pets`, `aop`, `genericos`, `benchmark`, `logs`) respondem, e os diagramas UML são servidos em `/uml` |
 
 ---
 
