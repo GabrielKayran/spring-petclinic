@@ -454,9 +454,17 @@ mostra o resultado.
 | 3. Observer + @Async | Diagrama de sequência e um botão que **registra uma visita de verdade** (o mesmo POST do formulário) e mostra uma linha do tempo: resposta HTTP em cerca de 0,3 s, lembrete iniciado em `task-1` (virtual) e "lembrete enviado" **+2.000 ms** depois |
 | 4. Strategy | Tabela com **todos os pets do banco**, a estratégia escolhida (classe) e o preço, com link para a tela real de visita |
 | 5. AOP | Tabela dos controllers no contexto do Spring, mostrando quais viraram **proxy CGLIB** (`VetController$$SpringCGLIB$$0`), e botões que chamam métodos auditados e exibem a linha `[AUDITORIA]` |
+| 7. Banco de dados | O caminho de uma consulta (controller → repositório → Spring Data → Hibernate → JDBC/HikariCP → PostgreSQL), `Pet.java` ao lado do `CREATE TABLE pets` com as anotações ligadas às colunas, modelo entidade-relacionamento, **contagem de linhas de cada tabela** e **o SQL que o Hibernate gera** para quatro chamadas: `findById`, consulta derivada do nome do método, `@Query` em JPQL e um `INSERT` desfeito por rollback |
 | Console ao vivo | Os **logs reais** do aspecto, do listener e do gRPC, capturados por um appender do Logback. Funciona também no Render, onde não há terminal à vista |
 
-Arquivos: `dashboard/DashboardController.java` (página + API `/api/dashboard/*`), `GrpcDemoClient.java`,
+Os trechos de código dos cards são **cópias das linhas reais** do repositório, com o nome do arquivo, o número
+das linhas e as linhas importantes marcadas com uma nota.
+
+O SQL do card 7 é capturado pelo `SqlRecorder`, um `StatementInspector` do Hibernate registrado por um
+`HibernatePropertiesCustomizer`. Ele só guarda os comandos da própria requisição da demo (`ThreadLocal`).
+
+Arquivos: `dashboard/DashboardController.java` (página + API `/api/dashboard/*`), `DatabaseDemoController.java`
+(`/api/dashboard/database` e `/api/dashboard/sql`), `SqlRecorder.java`, `GrpcDemoClient.java`,
 `BenchmarkDemo.java`, `DashboardLogAppender.java`, `templates/dashboard/dashboard.html`,
 `static/resources/js/dashboard.js` e `static/resources/css/dashboard.css`. Os diagramas da página usam
 [Mermaid](https://mermaid.js.org) carregado de um CDN, então o navegador da apresentação precisa de internet.
@@ -586,7 +594,7 @@ Abra o `/painel`. **Mostrar** o cabeçalho com o ambiente: Java 21, Spring Boot 
 ./mvnw test
 ```
 
-Mostrar `Tests run: 104, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
+Mostrar `Tests run: 108, Failures: 0, Errors: 0, Skipped: 2` e `BUILD SUCCESS`. Os testes rodam no H2 em memória.
 Os 2 pulados são os de MySQL via Testcontainers, que exigem o Docker em execução.
 
 | Extensão | Teste | O que prova |

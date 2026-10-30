@@ -66,6 +66,66 @@
     return '<h3>' + title + '</h3><div class="dash-diagram"><pre class="mermaid">' + escapeHtml(mermaidSource) + '</pre></div>';
   }
 
+  // Real excerpts from the repository: file name, line numbers and marked lines with a note
+  const KEYWORDS = {
+    java: 'package import public private protected static final class interface record extends implements return new try finally throws throw if else for while void int long boolean this null var default case switch',
+    sql: 'select from where join left inner outer on and or order by group insert into values create table if exists references primary key not null int text date unique index as like offset fetch first rows only limit generated default identity asc desc count in',
+    proto: 'syntax package option service rpc returns message repeated string int32',
+    props: ''
+  };
+
+  function highlightLine(line, lang) {
+    const words = new Set(KEYWORDS[lang].split(' '));
+    const comment = { sql: '--.*', props: '#.*' }[lang] || '//.*';
+    const re = new RegExp('(' + comment + ')|("(?:[^"\\\\]|\\\\.)*")|(@[A-Za-z]+)|([A-Za-z_][A-Za-z0-9_]*)|(\\d[\\d_]*)', 'g');
+    let out = '';
+    let last = 0;
+    let m;
+    while ((m = re.exec(line)) !== null) {
+      out += escapeHtml(line.slice(last, m.index));
+      const token = escapeHtml(m[0]);
+      if (m[1]) {
+        out += '<span class="c">' + token + '</span>';
+      }
+      else if (m[2]) {
+        out += '<span class="s">' + token + '</span>';
+      }
+      else if (m[3]) {
+        out += '<span class="a">' + token + '</span>';
+      }
+      else if (m[4] && words.has(lang === 'sql' ? m[4].toLowerCase() : m[4])) {
+        out += '<span class="k">' + token + '</span>';
+      }
+      else if (m[4] && lang !== 'sql' && /^[A-Z]/.test(m[4])) {
+        out += '<span class="t">' + token + '</span>';
+      }
+      else if (m[5]) {
+        out += '<span class="n">' + token + '</span>';
+      }
+      else {
+        out += token;
+      }
+      last = re.lastIndex;
+    }
+    return out + escapeHtml(line.slice(last));
+  }
+
+  // marks: { lineNumber: 'note' }; an empty note only highlights the line
+  function source(file, lang, start, code, marks = {}) {
+    const body = code.replace(/^\n+|\s+$/g, '').split('\n').map((line, i) => {
+      const n = start + i;
+      const marked = Object.prototype.hasOwnProperty.call(marks, n);
+      return '<span class="dash-line' + (marked ? ' mark' : '') + '"><span class="ln">' + n + '</span>' +
+        highlightLine(line, lang) + (marks[n] ? '<span class="note">' + marks[n] + '</span>' : '') + '</span>';
+    }).join('');
+    return '<figure class="dash-src"><figcaption>' + escapeHtml(file) + '</figcaption><pre><code>' + body + '</code></pre></figure>';
+  }
+
+  function formatSql(sql) {
+    return sql.replace(/\s+(from|where|left join|join|order by|offset|fetch|values|limit)\s/g, '\n$1 ')
+      .replace(/,\s*(?=[a-z]\d+_\d+\.)/g, ',\n    ');
+  }
+
   function table(header, rows) {
     return '<table class="dash-table"><tr>' + header.map((c) => '<th>' + c + '</th>').join('') + '</tr>' +
       rows.map((r) => '<tr>' + r.map((c) => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</table>';
@@ -135,6 +195,81 @@
   M -- "retorno" --> A
   A -- "log: método, args, ms" --> LOG[("log")]`;
 
+  const DB_DIAGRAM = `flowchart LR
+  C["OwnerController"] --> R["OwnerRepository<br/>(só a interface)"]
+  R --> SD["proxy do Spring Data<br/>implementa os métodos"]
+  SD --> H["Hibernate (JPA)<br/>objeto ⇄ linha"]
+  H --> J["JDBC + pool HikariCP"]
+  J --> DB[("PostgreSQL 18<br/>Neon, São Paulo")]`;
+
+  const ER_DIAGRAM = `erDiagram
+  OWNERS ||--o{ PETS : "owner_id"
+  TYPES ||--o{ PETS : "type_id"
+  PETS ||--o{ VISITS : "pet_id"
+  VETS ||--o{ VET_SPECIALTIES : "vet_id"
+  SPECIALTIES ||--o{ VET_SPECIALTIES : "specialty_id"
+  OWNERS {
+    int id PK
+    text first_name
+    text last_name
+    text city
+  }
+  PETS {
+    int id PK
+    text name
+    date birth_date
+    int type_id FK
+    int owner_id FK
+  }
+  VISITS {
+    int id PK
+    int pet_id FK
+    date visit_date
+    text description
+  }
+  TYPES {
+    int id PK
+    text name
+  }`;
+
+  const SQL_DEMOS = {
+    findById: {
+      label: 'owners.findById(1)',
+      code: () => source('owner/OwnerRepository.java', 'java', 36,
+        'public interface OwnerRepository extends JpaRepository<Owner, Integer> {',
+        { 36: 'findById, save, delete... vêm prontos' }),
+      why: 'Método herdado do <code>JpaRepository</code>. Como <code>Owner.pets</code> e <code>Pet.visits</code> são EAGER, o Hibernate também traz os pets e as visitas.'
+    },
+    findByLastName: {
+      label: 'findByLastNameStartingWith("Davis")',
+      code: () => source('owner/OwnerRepository.java', 'java', 45,
+        '\tPage<Owner> findByLastNameStartingWith(String lastName, Pageable pageable);',
+        { 45: 'LastName + StartingWith → LIKE ?' }),
+      why: 'Ninguém escreveu essa consulta: o Spring Data a deduz do <b>nome do método</b> e o Hibernate gera o SQL com paginação.'
+    },
+    query: {
+      label: '@Query: findPetTypes()',
+      code: () => source('owner/PetTypeRepository.java', 'java', 36, `
+	@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
+	List<PetType> findPetTypes();`, { 36: 'JPQL: fala de classes, não de tabelas' }),
+      why: 'Com <code>@Query</code> a consulta é escrita em JPQL, sobre a classe <code>PetType</code>. O Hibernate a traduz para o SQL do banco em uso.'
+    },
+    rollback: {
+      label: 'INSERT + rollback',
+      code: () => source('dashboard/DatabaseDemoController.java', 'java', 91, `
+	private List<?> insertAndRollBack() {
+		return this.transactions.execute(status -> {
+			PetType type = new PetType();
+			type.setName("demo-rollback");
+			PetType saved = this.petTypes.saveAndFlush(type);
+			status.setRollbackOnly();
+			return List.of(saved);
+		});
+	}`, { 95: 'o INSERT vai para o banco agora', 96: 'no fim da transação: desfaz' }),
+      why: 'Um objeto novo vira um <code>INSERT</code> e ganha o id gerado pelo banco. A transação é desfeita no fim, então nenhuma linha fica gravada: conte as linhas antes e depois.'
+    }
+  };
+
   const REPORT_DIAGRAM = `flowchart LR
   J[".jrxml<br/>(layout do iReport /<br/>Jaspersoft Studio)"] -- "1. compilar<br/>(uma vez)" --> R["JasperReport"]
   D[("Pets do banco +<br/>preço do Strategy")] -- "JRBeanCollectionDataSource" --> F
@@ -161,6 +296,7 @@
       <a href="#ext4">4. Strategy</a>
       <a href="#ext5">5. AOP @Audited</a>
       <a href="#ext6">6. Relatório PDF</a>
+      <a href="#ext7">7. Banco de dados</a>
       <a href="#uml">UML</a>
     </nav>
 
@@ -183,11 +319,11 @@
     ['1. Programação genérica', '<code>Repository&lt;Vet, Integer&gt;</code>, <code>Map&lt;String, VisitPriceStrategy&gt;</code>, <code>StreamObserver&lt;T&gt;</code>', 'demo logo abaixo'],
     ['2. Multithreading', 'virtual threads, <code>ExecutorService</code>, tarefas <code>Callable</code>/<code>Future</code>, <code>Semaphore</code> (sincronização), <code>@Async</code>', '<a href="#ext2">card 2</a>, <a href="#ext3">card 3</a>'],
     ['3. RMI', '<code>demos/rmi</code>: interface <code>Remote</code>, stub, Registry :1099 &rarr; sucessor gRPC', '<a href="#ext1">card 1</a>'],
-    ['4. Frameworks (MVC, dados, testes, relatórios)', 'Spring MVC (sucessor do Struts), JPA/Hibernate, JUnit 5 (104 testes), JasperReports (PDF)', '<a href="#ext6">card 6</a> e todo o sistema'],
+    ['4. Frameworks (MVC, dados, testes, relatórios)', 'Spring MVC (sucessor do Struts), JPA/Hibernate, JUnit 5 (108 testes), JasperReports (PDF)', '<a href="#ext6">card 6</a>, <a href="#ext7">card 7</a> e todo o sistema'],
     ['5. Princípios e padrões', 'Strategy, Observer, Proxy, Template Method, Builder, MVC, Broker... e SOLID', '<a href="#ext3">3</a>, <a href="#ext4">4</a>, <a href="#ext5">5</a> e tabela abaixo'],
     ['6. Aspectos', 'concern, pointcut, advice, join point, weaving: <code>@Audited</code> + <code>AuditAspect</code>', '<a href="#ext5">card 5</a>'],
     ['7.1 Aplicação integrada', 'as 5 extensões rodando juntas no mesmo PetClinic', 'esta página'],
-    ['7.2 Persistência', 'PostgreSQL no Neon via JPA/Hibernate (veja o cabeçalho)', 'cabeçalho'],
+    ['7.2 Persistência', 'PostgreSQL no Neon via JPA/Hibernate e Spring Data', '<a href="#ext7">card 7</a>'],
     ['7.3 UML', '11 diagramas: casos de uso, classes, componentes, sequência, implantação, atividade', '<a href="#uml">galeria UML</a>']
   ];
 
@@ -240,20 +376,16 @@
     'mensagens binárias Protobuf e transporte HTTP/2.',
     diagram('Antes e depois', GRPC_DIAGRAM) + `
       <h3 class="mt-3">O contrato</h3>
-      <div class="dash-cols">
-        <pre class="dash-code"><span class="c">// RMI: interface Java</span>
-<span class="k">interface</span> <span class="t">VetService</span>
-    <span class="k">extends</span> Remote {
-  List&lt;String&gt; listVets()
-      <span class="k">throws</span> RemoteException;
-}</pre>
-        <pre class="dash-code"><span class="c">// gRPC: vets.proto</span>
-<span class="k">service</span> <span class="t">VetService</span> {
-  <span class="k">rpc</span> ListVets
-    (ListVetsRequest)
-    <span class="k">returns</span> (ListVetsResponse);
-}</pre>
-      </div>`,
+      ${source('demos/rmi/VetService.java', 'java', 5, `
+public interface VetService extends Remote {
+
+	List<String> listVets() throws RemoteException;
+
+}`, { 5: 'contrato em Java: só Java chama', 7: 'toda chamada pode falhar na rede' })}
+      ${source('src/main/protobuf/vets.proto', 'proto', 9, `
+service VetService {
+  rpc ListVets (ListVetsRequest) returns (ListVetsResponse);
+}`, { 10: 'o stub de cada linguagem é gerado daqui' })}`,
     `<h3>Demo ao vivo</h3>
      <div class="dash-actions">
        <button class="btn btn-primary btn-sm" id="grpc">Chamar ListVets via gRPC</button>
@@ -267,7 +399,23 @@
     'Cada thread de plataforma é uma thread do sistema operacional: cara, com cerca de 1 MB de pilha e limitada a poucos milhares. ' +
     'Virtual threads (Java 21) são gerenciadas pela JVM. Quando bloqueiam (I/O, banco, sleep), liberam a thread do SO, ' +
     'e o código continua simples e bloqueante. No PetClinic basta <code>spring.threads.virtual.enabled=true</code>.',
-    diagram('Por que fica mais rápido', THREADS_DIAGRAM),
+    diagram('Por que fica mais rápido', THREADS_DIAGRAM) +
+      '<h3 class="mt-3">No código</h3>' +
+      source('src/main/resources/application.properties', 'props', 33, 'spring.threads.virtual.enabled=true',
+        { 33: 'Tomcat e @Async passam a usar virtual threads' }) +
+      source('dashboard/BenchmarkDemo.java', 'java', 57, `
+	private static long measure(ExecutorService executor, int tasks) {
+		long start = System.nanoTime();
+		try (executor) {
+			for (int i = 0; i < tasks; i++) {
+				executor.submit(() -> {
+					Thread.sleep(Duration.ofSeconds(1));
+					return null;
+				});
+			}
+		}
+		return (System.nanoTime() - start) / 1_000_000;
+	}`, { 59: 'fechar o executor = esperar todas', 62: 'bloqueia: a virtual thread desmonta' }),
     `<h3>Quem atendeu esta requisição?</h3>
      <div class="dash-actions"><button class="btn btn-primary btn-sm" id="thread">GET /thread</button></div>
      <div class="dash-result" id="thread-result"><span class="dash-empty">Mostra o nome e o tipo da thread do Tomcat.</span></div>
@@ -288,7 +436,21 @@
     'O <code>VisitController</code> (o sujeito) só publica um <code>VisitRegisteredEvent</code> e não conhece quem vai reagir. ' +
     'O <code>VisitReminderListener</code> (o observador) recebe o evento em <b>outra thread</b> com <code>@Async</code>, ' +
     'então a resposta HTTP não espera os 2 s do "envio" do lembrete.',
-    diagram('Registrar visita &rarr; evento &rarr; lembrete', OBSERVER_DIAGRAM),
+    diagram('Registrar visita &rarr; evento &rarr; lembrete', OBSERVER_DIAGRAM) +
+      '<h3 class="mt-3">O sujeito e o observador</h3>' +
+      source('owner/VisitController.java', 'java', 115, `
+		owner.addVisit(petId, visit);
+		this.owners.save(owner);
+
+		this.events.publishEvent(new VisitRegisteredEvent(this, owner.getFirstName() + " " + owner.getLastName(),
+				owner.getPet(petId).getName(), visit.getDate(), visit.getDescription()));`,
+        { 116: 'grava no banco', 118: 'só publica: não conhece o listener' }) +
+      source('reminder/VisitReminderListener.java', 'java', 37, `
+	@Async
+	@EventListener
+	public void sendReminder(VisitRegisteredEvent event) throws InterruptedException {
+		Thread thread = Thread.currentThread();`,
+        { 37: 'roda em outra thread', 38: 'recebe o evento pelo tipo' }),
     `<h3>Demo ao vivo: registra uma visita de verdade</h3>
      <div class="dash-actions">
        <select class="form-select form-select-sm" id="visit-pet"><option>carregando pets...</option></select>
@@ -305,10 +467,23 @@
     '<code>getOrDefault(type, defaultStrategy)</code>, sem nenhum <code>if</code>. Um tipo novo exige só uma classe nova.',
     diagram('Estrutura', STRATEGY_DIAGRAM) + `
       <h3 class="mt-3">A escolha, sem if/switch</h3>
-      <pre class="dash-code"><span class="c">// VisitPriceService</span>
-<span class="k">return</span> strategiesByType
-    .getOrDefault(type, defaultStrategy)
-    .calculatePrice(pet);</pre>
+      ${source('pricing/VisitPriceService.java', 'java', 37, `
+	public VisitPriceService(Map<String, VisitPriceStrategy> strategiesByType) {
+		this.strategiesByType = strategiesByType;
+		this.defaultStrategy = strategiesByType.get(DefaultPriceStrategy.NAME);
+	}
+
+	public BigDecimal calculatePrice(Pet pet) {
+		return strategyFor(pet).calculatePrice(pet);
+	}
+
+	public VisitPriceStrategy strategyFor(Pet pet) {
+		String type = Optional.ofNullable(pet.getType()).map(PetType::getName).orElse(DefaultPriceStrategy.NAME);
+		return this.strategiesByType.getOrDefault(type, this.defaultStrategy);
+	}`, { 37: 'o Spring injeta todas as estratégias', 48: 'a escolha inteira' })}
+      ${source('pricing/DogPriceStrategy.java', 'java', 26, `
+@Component("dog")
+class DogPriceStrategy implements VisitPriceStrategy {`, { 26: 'nome do bean = tipo do pet' })}
       <p class="small text-muted mt-2 mb-0">Cão: R$ 100 + R$ 5 por ano de idade &middot; Gato: R$ 90 &middot; Padrão: R$ 70</p>`,
     `<h3>Preço calculado para cada pet do banco</h3>
      <div class="dash-table-scroll" id="prices"><span class="dash-empty">carregando...</span></div>`,
@@ -319,7 +494,23 @@
     'Log e medição de tempo são <i>cross-cutting concerns</i>: aparecem em todo lugar. Com AOP eles ficam num só lugar, o <code>AuditAspect</code>, ' +
     'e são "costurados" (weaving) nos métodos marcados com <code>@Audited</code>, sem editar o corpo deles. O Spring faz o weaving ' +
     'com proxies em tempo de execução, sem o compilador especial do AspectJ.',
-    diagram('Como a chamada passa pelo aspecto', AOP_DIAGRAM) + `
+    diagram('Como a chamada passa pelo aspecto', AOP_DIAGRAM) +
+      '<h3 class="mt-3">O aspecto e onde ele entra</h3>' +
+      source('audit/AuditAspect.java', 'java', 37, `
+	@Around("@annotation(audited)")
+	public Object audit(ProceedingJoinPoint joinPoint, Audited audited) throws Throwable {
+		String method = joinPoint.getSignature().toShortString();
+		String args = Arrays.toString(joinPoint.getArgs());
+		long start = System.nanoTime();
+		try {
+			return joinPoint.proceed();
+		}
+		finally {
+			long durationMs = (System.nanoTime() - start) / 1_000_000;
+			log.info("[AUDITORIA] {} {} | args={} | {} ms | thread={}", method,`,
+        { 37: 'pointcut: métodos com @Audited', 43: 'join point: o método original', 47: 'advice: sempre depois' }) +
+      source('owner/VisitController.java', 'java', 103, '\t@Audited("Registrar visita")',
+        { 103: 'a única mudança no controller' }) + `
       <h3 class="mt-3">Controllers no contexto do Spring</h3>
       <div id="aop"><span class="dash-empty">carregando...</span></div>`,
     `<h3>Demo ao vivo: chame métodos auditados</h3>
@@ -351,6 +542,56 @@
      </div>
      <div class="dash-result" id="report-result"><span class="dash-empty">O método do controller tem <code>@Audited</code>: o tempo de geração aparece no console.</span></div>`,
     ['src/main/resources/reports/pets-and-prices.jrxml', 'report/ReportService.java', 'report/ReportRow.java', 'report/ReportController.java']));
+
+  // ---------- 7. Database ----------
+  cards.insertAdjacentHTML('beforeend', card('ext7', 7, 'Banco de dados: do objeto à tabela', 'JDBC + SQL à mão', 'JPA/Hibernate + Spring Data',
+    'O CRUD do PetClinic não tem SQL escrito à mão. As entidades são classes Java anotadas com JPA, o Hibernate converte objetos em linhas ' +
+    '(ORM) e o Spring Data cria a implementação dos repositórios a partir do nome dos métodos. Em produção o mesmo código fala com o ' +
+    'PostgreSQL do Neon; nos testes, com H2 em memória. Só muda a URL de conexão.',
+    diagram('O caminho de uma consulta', DB_DIAGRAM) + `
+      <h3 class="mt-3">A classe e a tabela</h3>
+      <div class="dash-cols">
+        ${source('owner/Pet.java', 'java', 44, `
+@Entity
+@Table(name = "pets")
+public class Pet extends NamedEntity {
+
+	@Column
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private LocalDate birthDate;
+
+	@ManyToOne
+	@JoinColumn(name = "type_id")
+	private PetType type;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "pet_id")
+	@OrderBy("date ASC")
+	private final Set<Visit> visits = new LinkedHashSet<>();`, { 45: '① tabela', 50: '② coluna birth_date', 53: '③ chave estrangeira', 57: '④ visits.pet_id' })}
+        ${source('db/postgres/schema.sql', 'sql', 36, `
+CREATE TABLE IF NOT EXISTS pets (
+  id         INT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  name       TEXT,
+  birth_date DATE,
+  type_id    INT NOT NULL REFERENCES types (id),
+  owner_id   INT REFERENCES owners (id)
+);`, { 36: '①', 39: '②', 40: '③' })}
+      </div>
+      ${source('db/postgres/schema.sql', 'sql', 47, `
+CREATE TABLE IF NOT EXISTS visits (
+  id          INT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  pet_id      INT REFERENCES pets (id),`, { 49: '④' })}
+      <h3 class="mt-3">Modelo entidade-relacionamento</h3>
+      <div class="dash-diagram"><pre class="mermaid">${escapeHtml(ER_DIAGRAM)}</pre></div>`,
+    `<h3>Demo ao vivo: o banco agora</h3>
+     <div class="dash-actions"><button class="btn btn-primary btn-sm" id="db-count">Contar linhas de cada tabela</button></div>
+     <div class="dash-result" id="db-count-result"><span class="dash-empty">Um SELECT COUNT(*) por tabela, direto no banco em uso.</span></div>
+     <h3 class="mt-3">Demo ao vivo: o SQL que o Hibernate gera</h3>
+     <div class="dash-actions">
+       ${Object.entries(SQL_DEMOS).map(([id, d]) => '<button class="btn btn-outline-secondary btn-sm" data-sql-demo="' + id + '">' + d.label + '</button>').join('')}
+     </div>
+     <div class="dash-result" id="sql-result"><span class="dash-empty">Escolha uma chamada. A página mostra o método Java, cada comando SQL enviado ao banco e os objetos que voltaram.</span></div>`,
+    ['owner/Pet.java', 'owner/Owner.java', 'owner/OwnerRepository.java', 'db/postgres/schema.sql', 'application-postgres.properties', 'dashboard/SqlRecorder.java']));
 
   // ---------- UML gallery (docs/uml/svg) ----------
 
@@ -701,6 +942,45 @@
       showError(target, e);
     }
   });
+
+  // ---------------------------------------------------------------------------
+  // 7. Database
+  // ---------------------------------------------------------------------------
+
+  document.getElementById('db-count').addEventListener('click', async () => {
+    const target = document.getElementById('db-count-result');
+    target.innerHTML = '<span class="dash-empty">contando...</span>';
+    try {
+      const counts = await getJson('/api/dashboard/database');
+      const max = Math.max(...counts.map((c) => c.rows), 1);
+      target.innerHTML = counts.map((c) => `
+        <div class="dash-bar"><div class="label"><span><code>${escapeHtml(c.table)}</code></span><b>${c.rows.toLocaleString('pt-BR')}</b></div>
+          <div class="track"><div class="fill" style="width:${Math.max(2, (c.rows * 100) / max)}%;background:var(--dash-verde)"></div></div></div>`).join('');
+    }
+    catch (e) {
+      showError(target, e);
+    }
+  });
+
+  root.querySelectorAll('[data-sql-demo]').forEach((button) => button.addEventListener('click', async () => {
+    const demo = SQL_DEMOS[button.dataset.sqlDemo];
+    const target = document.getElementById('sql-result');
+    target.innerHTML = '<span class="dash-empty">executando...</span>';
+    try {
+      const r = await getJson('/api/dashboard/sql?demo=' + encodeURIComponent(button.dataset.sqlDemo));
+      target.innerHTML = `
+        <ol class="dash-steps">
+          <li><h4>Chamada Java</h4>${demo.code()}<p class="small mb-0">${demo.why}</p></li>
+          <li><h4>SQL enviado ao banco: ${r.sql.length} ${r.sql.length === 1 ? 'comando' : 'comandos'} em ${r.millis} ms</h4>
+            ${r.sql.map((q, i) => source('comando ' + (i + 1), 'sql', 1, formatSql(q))).join('')}</li>
+          <li><h4>Objetos devolvidos: ${r.objects}</h4>
+            <pre class="dash-objects">${r.result.map(escapeHtml).join('\n') || '(nenhum)'}</pre></li>
+        </ol>`;
+    }
+    catch (e) {
+      showError(target, e);
+    }
+  }));
 
   // ---------------------------------------------------------------------------
   // Diagrams: render with the page font, after it loads, or Mermaid clips the labels

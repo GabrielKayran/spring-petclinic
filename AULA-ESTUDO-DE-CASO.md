@@ -17,15 +17,28 @@ O professor pede, no tópico 7, aplicação com padrões, multithreading, RMI e 
 e UML (7.3). O card **"Mapa da disciplina"** do painel mostra onde cada item está. Abram a aula por ele e
 fechem a prática por ele.
 
-## Quem apresenta o quê (sugestão)
+## Quem apresenta o quê (4 pessoas)
 
-| Pessoa | Teoria (terça) | Prática (quinta) |
-|---|---|---|
-| **P1** | Abertura, o sistema, RMI → gRPC, genéricos | Painel e deploy, RMI no terminal, gRPC, genéricos ao vivo |
-| **P2** | Multithreading → virtual threads, Observer + `@Async` | Benchmark, `/thread`, registro de visita |
-| **P3 (João, autor da UML)** | Princípios e padrões, AOP, UML | Strategy + live coding, AOP, UML, testes, fechamento |
+Cada pessoa fica com o **mesmo assunto nos dois dias**: explica na terça e demonstra na quinta. Assim cada um
+estuda a fundo uma parte só, e a prática fecha o que a teoria abriu. São cerca de 17 minutos por pessoa em
+cada dia.
 
+| Pessoa | Assunto | Terça (teoria) | Quinta (prática) |
+|---|---|---|---|
+| **P1** | O sistema e a comunicação remota | Abertura, o sistema, genéricos, RMI → gRPC | Painel e deploy, genéricos ao vivo, RMI no terminal, gRPC |
+| **P2** | Concorrência | Threads, sincronização, virtual threads, Observer + `@Async` | Benchmark, `/thread`, registro de visita com lembrete |
+| **P3** | Projeto | SOLID, padrões (Strategy, Template Method, Builder...), AOP | Strategy + live coding, AOP com o console, galeria UML |
+| **P4** | Frameworks e banco de dados | Spring MVC, JPA/Hibernate, Spring Data, PostgreSQL no Neon, relatórios, testes, fechamento | Card 7 (banco), relatório PDF, `./mvnw test`, fechamento |
+
+O João, autor da UML, fica bem como **P3**: os diagramas de projeto (05, 06, 07) são dele e caem nesse bloco.
 Todos precisam saber responder sobre todas as partes. A nota de domínio é do grupo.
+
+**O pedido do professor (mais visual no código e no banco):**
+- os cards do painel agora mostram **as linhas reais do código**, com o arquivo, o número das linhas e as linhas
+  importantes marcadas com uma nota;
+- o **card 7** mostra o banco por inteiro: o caminho de uma consulta, a classe ao lado da tabela, o modelo
+  entidade-relacionamento, as linhas de cada tabela e o SQL que o Hibernate gera, ao vivo;
+- regra para os slides e para a fala: **toda vez que citar uma classe, mostre o código dela**, e não só o nome.
 
 ---
 
@@ -33,18 +46,19 @@ Todos precisam saber responder sobre todas as partes. A nota de domínio é do g
 
 | Min | Quem | Bloco | Conteúdo e o que mostrar |
 |---|---|---|---|
-| 0–5 | P1 | Abertura | O que é um estudo de caso; por que o PetClinic (aplicação de referência oficial do Spring, mantida pelo time do framework); a tese acima; os itens 7.1–7.3 |
-| 5–15 | P1 | O sistema | Domínio (UML 01 e 02), arquitetura MVC + camadas (UML 03), implantação (UML 11). Frameworks do tópico 4: Spring MVC (sucessor do Struts), Hibernate/JPA, JUnit, JasperReports. Stack: Java 21, Spring Boot 4.1, PostgreSQL no Neon, Docker no Render |
-| 15–27 | P1 | RMI → gRPC | Camadas do RMI (stub, skeleton, Registry/naming); limitações (só Java, serialização Java insegura, firewall); gRPC = mesmo conceito de stub, contrato `.proto` neutro, Protobuf + HTTP/2. Padrões **Proxy** (stub) e **Broker** |
-| 27–32 | P1 | Genéricos | Classes e métodos genéricos no código (`Repository<Vet, Integer>`); *type erasure*; tipos brutos; curingas |
-| 32–45 | P2 | Multithreading | Estados de uma thread; thread de plataforma = thread do SO; pool fixo; sincronização (`Semaphore`); `Callable`/`Future`; virtual threads (Java 21): desmontam da *carrier* ao bloquear |
-| 45–50 | P2 | Observer + `@Async` | Sujeito, evento e observador; produtor/consumidor; por que a resposta HTTP não espera (UML 04) |
-| 50–60 | P3 | Princípios e padrões | SOLID com exemplos do código (OCP no Strategy, ISP no `VetRepository`, DIP no publisher); Strategy (UML 05), Observer (UML 06), Template Method, Builder; anti-padrão: cadeia de `if/switch` |
-| 60–67 | P3 | Aspectos | Espalhamento e entrelaçamento; concern, pointcut, advice, join point, weaving; AspectJ (`ajc`) × Spring AOP (proxy CGLIB) (UML 07) |
-| 67–70 | P3 | Fechamento | Tabela Clássico × Moderno (inclui Struts → Spring MVC e o caso Equifax); prévia da prática de quinta |
+| 0–4 | P1 | Abertura | O que é um estudo de caso; por que o PetClinic (aplicação de referência oficial do Spring); a tese acima; os itens 7.1–7.3; quem apresenta o quê |
+| 4–10 | P1 | O sistema | Domínio (UML 01 e 02), arquitetura MVC + camadas (UML 03), implantação (UML 11). Stack: Java 21, Spring Boot 4.1, PostgreSQL no Neon, Docker no Render |
+| 10–13 | P1 | Genéricos | `Repository<Vet, Integer>`, `Map<String, VisitPriceStrategy>`; *type erasure*; tipos brutos; curingas |
+| 13–17 | P1 | RMI → gRPC | Stub, skeleton, Registry; limitações (só Java, serialização insegura, firewall); gRPC: contrato `.proto`, Protobuf + HTTP/2. Mostrar a interface `VetService` e o `vets.proto` lado a lado. Padrões **Proxy** e **Broker** |
+| 17–30 | P2 | Multithreading | Estados de uma thread; thread de plataforma = thread do SO; pool fixo; `Semaphore`; `Callable`/`Future`; virtual threads desmontam da *carrier* ao bloquear. Mostrar o laço do `BenchmarkDemo` |
+| 30–34 | P2 | Observer + `@Async` | Sujeito, evento e observador; por que a resposta HTTP não espera (UML 04). Mostrar a linha do `publishEvent` e o `@Async` do listener |
+| 34–44 | P3 | Princípios e padrões | SOLID com o código (OCP no Strategy, ISP no `VetRepository`, DIP no publisher); Strategy (UML 05), Observer (UML 06), Template Method, Builder; anti-padrão: cadeia de `if/switch` |
+| 44–51 | P3 | Aspectos | Espalhamento e entrelaçamento; pointcut, advice, join point, weaving; AspectJ × Spring AOP (UML 07). Mostrar o `AuditAspect` com as três partes marcadas |
+| 51–57 | P4 | Frameworks | Spring MVC (sucessor do Struts): controller → template; injeção de dependência; JUnit 5 + MockMvc; JasperReports (layout `.jrxml` separado dos dados) |
+| 57–66 | P4 | Banco de dados | JDBC à mão × ORM; `@Entity`, `@Table`, `@ManyToOne`, `@OneToMany` ao lado do `CREATE TABLE`; Spring Data: o repositório é só uma interface e a consulta sai do nome do método; JPQL com `@Query`; transação e rollback; pool HikariCP; o Neon (PostgreSQL gerenciado) e o H2 nos testes |
+| 66–70 | P4 | Fechamento | Tabela Clássico × Moderno (inclui Struts → Spring MVC, JDBC → JPA e o caso Equifax); prévia da prática de quinta |
 
-**Slides:** um por linha da tabela, no máximo, com o diagrama UML correspondente. A tabela "Clássico vs Moderno" do
-`ESTUDO-DE-CASO.md` (seção 7) vira o slide de fechamento.
+**Slides:** no máximo um por linha da tabela, com o diagrama UML ou o trecho de código correspondente.
 
 ---
 
@@ -54,17 +68,18 @@ Mantenham o **console ao vivo** do painel visível o tempo todo: é ele que prov
 
 | Min | Quem | O que fazer | O que mostrar / dizer |
 |---|---|---|---|
-| 0–5 | P1 | Abrir o `/painel` | Cabeçalho: Java 21, Spring Boot 4.1, **PostgreSQL 18 (Neon)**, virtual threads ligadas. Card **Mapa da disciplina**. Explicar o deploy: GitHub → Docker → Render, banco no Neon |
-| 5–15 | P1 | RMI no terminal (`demos/rmi`) | `javac *.java`, `java Server`, `java Client`. Mostrar `extends Remote` e `throws RemoteException` |
-| 15–22 | P1 | Card 1 (gRPC) | Os dois contratos lado a lado; botão de chamada: **169 B em Protobuf × 447 B em JSON**; log `[gRPC]` no console |
-| 22–25 | P1 | Card 0 (Genéricos) | Botão "Inspecionar": `ArrayList == ArrayList → true`, mas o Spring lê `Map<String, VisitPriceStrategy>` e injeta 3 beans |
-| 25–33 | P2 | Benchmark | Terminal: `java BenchmarkThreads.java 2000` (cerca de 10 s × 1 s). Card 2: rodar **2.000 tarefas** no servidor (**≈ 10.000 ms × 1.000 ms**) e clicar em `GET /thread` (carrier `ForkJoinPool`) |
-| 33–42 | P2 | Card 3 (Observer) | Registrar visita: a resposta volta em menos de 0,5 s e "lembrete enviado" aparece **+2.000 ms** depois em `task-N`. Abrir `VisitController` e mostrar a única linha nova, o `publishEvent` |
-| 42–50 | P3 | Card 4 (Strategy) + live coding | Tabela de preços; link "tela" da Rosy (**R$ 225,00**). **Live coding** (abaixo): criar a estratégia do hamster, local |
-| 50–55 | P3 | Card 5 (AOP) | Tabela de proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada. Abrir `AuditAspect` |
-| 55–59 | P3 | Card 6 (Relatório) | "Gerar relatório PDF": pets agrupados por tipo, estratégia e preço (total **R$ 1.640,00**). O console mostra o `[AUDITORIA]` do relatório: cerca de 1 s no Render (o `.jrxml` é compilado quando a aplicação sobe). Abrir `pets-e-precos.jrxml` |
-| 59–63 | P3 | Galeria UML + testes | Card UML (11 diagramas): rastrear diagrama → código. Terminal: `./mvnw test` → **104 testes, 0 falhas** |
-| 63–70 | todos | Perguntas | Usar a lista de perguntas prováveis abaixo |
+| 0–4 | P1 | Abrir o `/painel` | Cabeçalho: Java 21, Spring Boot 4.1, **PostgreSQL 18 (Neon)**, virtual threads ligadas. Card **Mapa da disciplina**. Deploy: GitHub → Docker → Render, banco no Neon. Abrir o site no celular para mostrar que é responsivo |
+| 4–7 | P1 | Card 0 (Genéricos) | Botão "Inspecionar": `ArrayList == ArrayList → true`, mas o Spring lê `Map<String, VisitPriceStrategy>` e injeta 3 beans |
+| 7–12 | P1 | RMI no terminal (`demos/rmi`) | `javac *.java`, `java Server`, `java Client`. Mostrar `extends Remote` e `throws RemoteException` |
+| 12–17 | P1 | Card 1 (gRPC) | Os dois contratos lado a lado; chamada: **169 B em Protobuf × 447 B em JSON**; log `[gRPC]` no console |
+| 17–26 | P2 | Benchmark | Terminal: `java BenchmarkThreads.java 2000` (cerca de 10 s × 1 s). Card 2: **2.000 tarefas** no servidor (≈ 10.000 ms × 1.000 ms) e `GET /thread` (carrier `ForkJoinPool`) |
+| 26–34 | P2 | Card 3 (Observer) | Registrar visita: a resposta volta em menos de 0,5 s e "lembrete enviado" aparece **+2.000 ms** depois em `task-N`. Apontar a linha 118 do `VisitController` marcada no card |
+| 34–43 | P3 | Card 4 (Strategy) + live coding | Tabela de preços; link "tela" da Rosy (**R$ 225,00**). **Live coding** (abaixo): estratégia do hamster, local |
+| 43–48 | P3 | Card 5 (AOP) | Proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada |
+| 48–51 | P3 | Galeria UML | Rastrear diagrama → código (05 → `pricing`, 07 → `audit`) |
+| 51–62 | P4 | Card 7 (Banco) | Ler o caminho da consulta e a classe ao lado da tabela (①–④). **Contar linhas**. Clicar nas quatro chamadas: `findById` traz dono, pets e visitas em 2 comandos; `findByLastNameStartingWith` vira `like ?` sem ninguém ter escrito SQL; `@Query` em JPQL vira SQL; `INSERT + rollback`: contar as linhas de novo e mostrar que `types` não mudou. Depois, registrar uma visita no card 3 e contar: `visits` aumenta |
+| 62–65 | P4 | Card 6 (Relatório) + testes | PDF com pets por tipo e preço (total **R$ 1.640,00**). Terminal: `./mvnw test` → **108 testes, 0 falhas** |
+| 65–70 | todos | Perguntas | Usar a lista de perguntas prováveis abaixo |
 
 ### Live coding: Strategy e o princípio Aberto/Fechado (cerca de 3 min, local)
 
@@ -161,6 +176,21 @@ não calcula preço: recebe as linhas prontas do `VisitPriceService` (Strategy).
 
 **O Jasper é "clássico" ou "moderno"?** O motor continua sendo o padrão no Java (versão 7, de 2025). O que ficou
 para trás foi o editor iReport, substituído pelo Jaspersoft Studio, e o formato antigo do `.jrxml`.
+
+**Onde está a implementação do `OwnerRepository`?** Não existe no código. O Spring Data cria um proxy em tempo de
+execução que implementa a interface; `findByLastNameStartingWith` vira consulta pelo nome do método. É o padrão
+**Proxy** de novo, e o card 0 mostra a classe gerada.
+
+**O que é o problema N+1 e ele aparece aqui?** Uma consulta para a lista e mais uma para cada item. Os pets e as
+visitas são EAGER, e o `default_batch_fetch_size=16` faz o Hibernate buscar as visitas de até 16 pets num comando
+só, em vez de um comando por pet. O card 7 mostra quantos comandos cada chamada gerou.
+
+**Por que os testes não usam o Neon?** São rápidos, não dependem de rede e não sujam o banco da apresentação. O
+mesmo código roda nos dois porque o JPA esconde o dialeto: só mudam a URL e o profile.
+
+**O que garante que o `INSERT + rollback` não grava nada?** A transação do `TransactionTemplate` é marcada com
+`setRollbackOnly()`. O `INSERT` chega ao banco (`saveAndFlush`), mas o PostgreSQL desfaz tudo no fim. O id
+gerado é consumido mesmo assim, por isso aparece um número novo a cada clique.
 
 **Vocês desenvolveram o sistema?** O núcleo é o PetClinic original. As cinco extensões, o painel, o deploy e a UML
 são do grupo, e o histórico do Git mostra uma branch e commits por extensão. O README da UML já faz essa distinção.
