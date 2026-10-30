@@ -4,30 +4,25 @@
 
 <body>
 
-  <h2 th:text="#{findOwners}">Find Owners</h2>
+  <div class="page-head">
+    <h2 th:text="#{findOwners}">Owners</h2>
+    <a class="btn btn-outline-secondary" th:href="@{/owners/new}">
+      <span class="fa fa-plus" aria-hidden="true"></span> <span th:text="#{addOwner}">Add Owner</span>
+    </a>
+  </div>
 
-  <form th:object="${owner}" th:action="@{/owners}" method="get" class="form-horizontal" id="search-owner-form">
-    <div class="form-group">
-      <div class="control-group" id="lastNameGroup">
-        <label class="col-sm-2 control-label" th:text="#{lastName}">Last name </label>
-        <div class="col-sm-10">
-          <input class="form-control" th:field="*{lastName}" size="30" maxlength="80" />
-          <span class="help-inline">
-            <div th:if="${#fields.hasAnyErrors()}">
-              <p th:each="err : ${#fields.allErrors()}" th:text="${err}">Error</p>
-            </div>
-          </span>
-        </div>
-      </div>
+  <form th:object="${owner}" th:action="@{/owners}" method="get" class="sheet search-form" id="search-owner-form">
+    <label for="lastName" class="form-label" th:text="#{lastName}">Last name</label>
+    <div class="search-row">
+      <input class="form-control" th:errorclass="is-invalid" th:field="*{lastName}" maxlength="80"
+        autocomplete="off" />
+      <button type="submit" class="btn btn-primary" th:text="#{findOwner}">Find Owner</button>
     </div>
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary" th:text="#{findOwner}">Find Owner</button>
-      </div>
+    <div class="invalid-feedback d-block" th:if="${#fields.hasAnyErrors()}">
+      <p th:each="err : ${#fields.allErrors()}" th:text="${err}">Error</p>
     </div>
-
-    <a class="btn btn-primary" th:href="@{/owners/new}" th:text="#{addOwner}">Add Owner</a>
-
+    <p class="form-hint" th:unless="${#fields.hasAnyErrors()}" th:text="#{searchHint}">Leave blank to list every
+      owner.</p>
   </form>
 
 </body>

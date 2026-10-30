@@ -41,20 +41,20 @@ public class PetValidator implements Validator {
 		String name = pet.getName();
 		// name validation
 		if (!StringUtils.hasText(name)) {
-			errors.rejectValue("name", REQUIRED, REQUIRED);
+			errors.rejectValue("name", REQUIRED);
 		}
 		else if (name.length() > MAX_NAME_LENGTH) {
-			errors.rejectValue("name", "size", "Name must be no more than 30 characters");
+			errors.rejectValue("name", "size");
 		}
 
 		// type validation
 		if (pet.isNew() && pet.getType() == null) {
-			errors.rejectValue("type", REQUIRED, REQUIRED);
+			errors.rejectValue("type", REQUIRED);
 		}
 
 		// birth date validation
 		if (pet.getBirthDate() == null) {
-			errors.rejectValue("birthDate", REQUIRED, REQUIRED);
+			errors.rejectValue("birthDate", REQUIRED);
 		}
 	}
 

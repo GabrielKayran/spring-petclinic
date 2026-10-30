@@ -4,60 +4,66 @@
 
 <body>
 
-  <h2>
-    <th:block th:if="${visit['new']}" th:text="#{new}">New </th:block>
-    Visit
-  </h2>
-
-  <b th:text="#{pet}">Pet</b>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th th:text="#{name}">Name</th>
-        <th th:text="#{birthDate}">Birth Date</th>
-        <th th:text="#{type}">Type</th>
-        <th th:text="#{owner}">Owner</th>
-      </tr>
-    </thead>
-    <tr>
-      <td th:text="${pet.name}"></td>
-      <td th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}"></td>
-      <td th:text="${pet.type}"></td>
-      <td th:text="${owner?.firstName + ' ' + owner?.lastName}"></td>
-    </tr>
-  </table>
-
-  <p th:if="${visitPrice != null}" id="visitPrice">
-    <b th:text="#{consultationPrice}">Consultation price</b>:
-    <span th:text="${'R$ ' + #numbers.formatDecimal(visitPrice, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
-  </p>
-
-  <form th:object="${visit}" class="form-horizontal" method="post">
-    <div class="form-group has-feedback">
-      <input th:replace="~{fragments/inputField :: input ('Date', 'date', 'date')}" />
-      <input th:replace="~{fragments/inputField :: input ('Description', 'description', 'text')}" />
+  <div class="page-head">
+    <div>
+      <p class="eyebrow" th:text="#{owner} + ': ' + ${owner?.firstName + ' ' + owner?.lastName}">Owner</p>
+      <h2 th:text="#{newVisit}">New Visit</h2>
     </div>
+  </div>
 
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
+  <div class="visit-layout">
+    <div>
+      <dl class="sheet facts">
+        <div>
+          <dt th:text="#{pet}">Pet</dt>
+          <dd th:text="${pet.name}"></dd>
+        </div>
+        <div>
+          <dt th:text="#{type}">Type</dt>
+          <dd th:text="${#messages.msgOrNull('petType.' + pet.type) ?: pet.type}"></dd>
+        </div>
+        <div>
+          <dt th:text="#{birthDate}">Birth Date</dt>
+          <dd th:text="${#temporals.format(pet.birthDate, 'dd/MM/yyyy')}"></dd>
+        </div>
+        <div th:if="${visitPrice != null}" id="visitPrice" class="price">
+          <dt th:text="#{consultationPrice}">Consultation price</dt>
+          <dd th:text="${'R$ ' + #numbers.formatDecimal(visitPrice, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</dd>
+        </div>
+      </dl>
+
+      <form th:object="${visit}" class="sheet form-sheet" method="post">
+        <input th:replace="~{fragments/inputField :: input (#{date}, 'date', 'date')}" />
+        <input th:replace="~{fragments/inputField :: input (#{description}, 'description', 'text')}" />
         <input type="hidden" name="petId" th:value="${pet.id}" />
-        <button class="btn btn-primary" type="submit" th:text="#{addVisit}">Add Visit</button>
-      </div>
+        <div class="button-row">
+          <button class="btn btn-primary" type="submit" th:text="#{addVisit}">Add Visit</button>
+          <a class="btn btn-link" th:href="@{/owners/{id}(id=${owner.id})}" th:text="#{cancel}">Cancel</a>
+        </div>
+      </form>
     </div>
-  </form>
 
-  <br />
-  <b th:text="#{previousVisits}">Previous Visits</b>
-  <table class="table table-striped">
-    <tr>
-      <th th:text="#{date}">Date</th>
-      <th th:text="#{description}">Description</th>
-    </tr>
-    <tr th:if="${!visit['new']}" th:each="visit : ${pet.visits}">
-      <td th:text="${#temporals.format(visit.date, 'yyyy-MM-dd')}"></td>
-      <td th:text=" ${visit.description}"></td>
-    </tr>
-  </table>
+    <section>
+      <h3 class="section-title" th:text="#{previousVisits}">Previous Visits</h3>
+      <div class="sheet sheet-flush" th:unless="${#lists.isEmpty(pet.visits)}">
+        <table class="table visits">
+          <thead>
+            <tr>
+              <th th:text="#{date}">Date</th>
+              <th th:text="#{description}">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${!visit['new']}" th:each="visit : ${pet.visits}">
+              <td class="nowrap" th:text="${#temporals.format(visit.date, 'dd/MM/yyyy')}"></td>
+              <td th:text="${visit.description}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="empty" th:if="${#lists.isEmpty(pet.visits)}" th:text="#{noVisits}">No visits yet.</p>
+    </section>
+  </div>
 
 </body>
 

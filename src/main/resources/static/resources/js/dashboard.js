@@ -149,7 +149,7 @@
     <div class="dash-hero">
       <h1>Estudo de caso: Spring PetClinic</h1>
       <p>POO2 (UFU): cinco extensões, cada uma comparando a tecnologia clássica da disciplina com o seu equivalente moderno.
-         Tudo nesta página roda <b>ao vivo</b> sobre a aplicação real.</p>
+         Os botões desta página chamam a aplicação real, rodando agora.</p>
       <div id="runtime"><span class="dash-chip">carregando ambiente...</span></div>
     </div>
 
@@ -168,7 +168,7 @@
       <div id="cards"></div>
       <aside class="dash-console">
         <header>
-          <span class="dash-live">Console ao vivo: logs das extensões</span>
+          <span>Console: logs das extensões</span>
           <button type="button" id="clear-console">limpar</button>
         </header>
         <div class="lines" id="console"><div class="dash-empty">Clique nos botões ao lado. Os logs do aspecto, do listener e do gRPC aparecem aqui.</div></div>
@@ -443,7 +443,7 @@
       'Virtual threads <b>' + (env.virtualThreads ? 'ligadas' : 'desligadas') + '</b>',
       'Profiles <b>' + escapeHtml(env.profiles.length ? env.profiles.join(', ') : 'default') + '</b>'
     ].map((t) => '<span class="dash-chip">' + t + '</span>').join('') +
-      '<div class="small mt-1" style="opacity:.75">' + escapeHtml(env.databaseUrl) + '</div>';
+      '<span class="dash-runtime-url">' + escapeHtml(env.databaseUrl) + '</span>';
   }).catch((e) => showError(document.getElementById('runtime'), e));
 
   // ---------------------------------------------------------------------------

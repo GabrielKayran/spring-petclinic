@@ -26,13 +26,13 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 	/**
 	 * Uses session storage to remember the user’s language setting across requests.
-	 * Defaults to English if nothing is specified.
+	 * Defaults to Brazilian Portuguese.
 	 * @return session-based {@link LocaleResolver}
 	 */
 	@Bean
 	public LocaleResolver localeResolver() {
 		SessionLocaleResolver resolver = new SessionLocaleResolver();
-		resolver.setDefaultLocale(Locale.ENGLISH);
+		resolver.setDefaultLocale(Locale.of("pt", "BR"));
 		return resolver;
 	}
 

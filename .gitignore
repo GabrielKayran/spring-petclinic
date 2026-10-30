@@ -49,3 +49,4 @@ _site/
 
 # Hand-written dashboard stylesheet (not generated from SCSS)
 !src/main/resources/static/resources/css/dashboard.css
+!src/main/resources/static/resources/css/site.css

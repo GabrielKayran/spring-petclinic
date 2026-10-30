@@ -4,20 +4,25 @@
 
 <body>
 
-  <h2 th:text="#{owner}">Owner</h2>
-  <form th:object="${owner}" class="form-horizontal" id="add-owner-form" method="post">
-    <div class="form-group has-feedback">
+  <div class="page-head">
+    <h2 th:text="${owner['new']} ? #{addOwner} : #{editOwner}">Owner</h2>
+  </div>
+
+  <form th:object="${owner}" class="sheet form-sheet" id="add-owner-form" method="post">
+    <div class="field-grid">
       <input th:replace="~{fragments/inputField :: input (#{firstName}, 'firstName', 'text')}" />
       <input th:replace="~{fragments/inputField :: input (#{lastName}, 'lastName', 'text')}" />
-      <input th:replace="~{fragments/inputField :: input (#{address}, 'address', 'text')}" />
+    </div>
+    <input th:replace="~{fragments/inputField :: input (#{address}, 'address', 'text')}" />
+    <div class="field-grid">
       <input th:replace="~{fragments/inputField :: input (#{city}, 'city', 'text')}" />
       <input th:replace="~{fragments/inputField :: input (#{telephone}, 'telephone', 'text')}" />
     </div>
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <button th:with="text=${owner['new']} ? #{addOwner} : #{updateOwner}" class="btn btn-primary" type="submit"
-          th:text="${text}">Add Owner</button>
-      </div>
+    <div class="button-row">
+      <button th:with="text=${owner['new']} ? #{addOwner} : #{updateOwner}" class="btn btn-primary" type="submit"
+        th:text="${text}">Add Owner</button>
+      <a class="btn btn-link" th:href="${owner['new']} ? @{/owners/find} : @{/owners/{id}(id=${owner.id})}"
+        th:text="#{cancel}">Cancel</a>
     </div>
   </form>
 </body>

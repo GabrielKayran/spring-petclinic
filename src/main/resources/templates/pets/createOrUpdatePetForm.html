@@ -4,28 +4,24 @@
 
 <body>
 
-  <h2>
-    <th:block th:if="${pet['new']}" th:text="#{new}">New </th:block>
-    <span th:text="#{pet}">Pet</span>
-  </h2>
-  <form th:object="${pet}" class="form-horizontal" method="post">
-    <input type="hidden" name="id" th:value="*{id}" />
-    <div class="form-group has-feedback">
-      <div class="form-group">
-        <label class="col-sm-2 control-label" th:text="#{owner}">Owner</label>
-        <div class="col-sm-10">
-          <span th:text="${owner?.firstName + ' ' + owner?.lastName}" />
-        </div>
-      </div>
-      <input th:replace="~{fragments/inputField :: input ('Name', 'name', 'text')}" />
-      <input th:replace="~{fragments/inputField :: input ('Birth Date', 'birthDate', 'date')}" />
-      <input th:replace="~{fragments/selectField :: select ('Type', 'type', ${types})}" />
+  <div class="page-head">
+    <div>
+      <p class="eyebrow" th:text="#{owner} + ': ' + ${owner?.firstName + ' ' + owner?.lastName}">Owner</p>
+      <h2 th:text="${pet['new']} ? #{newPet} : #{editPet}">New Pet</h2>
     </div>
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <button th:with="text=${pet['new']} ? 'Add Pet' : 'Update Pet'" class="btn btn-primary" type="submit"
-          th:text="${text}">Add Pet</button>
-      </div>
+  </div>
+
+  <form th:object="${pet}" class="sheet form-sheet" method="post">
+    <input type="hidden" name="id" th:value="*{id}" />
+    <input th:replace="~{fragments/inputField :: input (#{name}, 'name', 'text')}" />
+    <div class="field-grid">
+      <input th:replace="~{fragments/inputField :: input (#{birthDate}, 'birthDate', 'date')}" />
+      <input th:replace="~{fragments/selectField :: select (#{type}, 'type', ${types})}" />
+    </div>
+    <div class="button-row">
+      <button th:with="text=${pet['new']} ? #{addPet} : #{updatePet}" class="btn btn-primary" type="submit"
+        th:text="${text}">Add Pet</button>
+      <a class="btn btn-link" th:href="@{/owners/{id}(id=${owner.id})}" th:text="#{cancel}">Cancel</a>
     </div>
   </form>
 

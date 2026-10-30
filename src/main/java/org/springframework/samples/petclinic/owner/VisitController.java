@@ -118,7 +118,7 @@ class VisitController {
 		this.events.publishEvent(new VisitRegisteredEvent(this, owner.getFirstName() + " " + owner.getLastName(),
 				owner.getPet(petId).getName(), visit.getDate(), visit.getDescription()));
 
-		redirectAttributes.addFlashAttribute("message", "Your visit has been booked");
+		redirectAttributes.addFlashAttribute("message", "visitBooked");
 		return "redirect:/owners/{ownerId}";
 	}
 

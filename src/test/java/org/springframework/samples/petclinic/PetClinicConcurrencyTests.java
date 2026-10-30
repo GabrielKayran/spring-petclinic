@@ -77,7 +77,7 @@ public class PetClinicConcurrencyTests {
 
 					HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-					ResponseEntity<String> response = template.postForEntity("/owners/" + ownerId + "/pets/new",
+					ResponseEntity<String> response = template.postForEntity("/owners/" + ownerId + "/pets/new?lang=en",
 							request, String.class);
 
 					String body = response.getBody();
