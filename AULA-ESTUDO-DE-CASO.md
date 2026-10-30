@@ -4,7 +4,7 @@ Material de apoio para o grupo. Detalhes técnicos de cada extensão estão no [
 e os diagramas, em [docs/uml](docs/uml/README.md).
 
 - **Site:** `https://petclinic-poo2.onrender.com/painel` (menu "Estudo de caso")
-- **Slides da teoria (29 slides, com notas do apresentador):** https://claude.ai/artifact/E6QxzjL5bopc1RdBjEyAuc
+- **Slides da teoria (32 slides, com notas do apresentador; o código nos slides é cópia das linhas reais):** https://claude.ai/artifact/E6QxzjL5bopc1RdBjEyAuc
 - **Formato:** 70 min de teoria (terça) + 70 min de prática (quinta), com tolerância de ±10 min
 - **Nota de cada dia (35 pts):** 10 tempo · 10 qualidade e aderência ao tema · **15 domínio do assunto**
 
@@ -46,16 +46,18 @@ Todos precisam saber responder sobre todas as partes. A nota de domínio é do g
 
 | Min | Quem | Bloco | Conteúdo e o que mostrar |
 |---|---|---|---|
-| 0–4 | P1 | Abertura | O que é um estudo de caso; por que o PetClinic (aplicação de referência oficial do Spring); a tese acima; os itens 7.1–7.3; quem apresenta o quê |
-| 4–10 | P1 | O sistema | Domínio (UML 01 e 02), arquitetura MVC + camadas (UML 03), implantação (UML 11). Stack: Java 21, Spring Boot 4.1, PostgreSQL no Neon, Docker no Render |
-| 10–13 | P1 | Genéricos | `Repository<Vet, Integer>`, `Map<String, VisitPriceStrategy>`; *type erasure*; tipos brutos; curingas |
-| 13–17 | P1 | RMI → gRPC | Stub, skeleton, Registry; limitações (só Java, serialização insegura, firewall); gRPC: contrato `.proto`, Protobuf + HTTP/2. Mostrar a interface `VetService` e o `vets.proto` lado a lado. Padrões **Proxy** e **Broker** |
+| 0–3 | P1 | Abertura | O que é um estudo de caso; por que o PetClinic (aplicação de referência oficial do Spring); a tese acima; os itens 7.1–7.3; slide do roteiro com os 4 blocos |
+| 3–8 | P1 | O sistema | Domínio (UML 01 e 02), arquitetura MVC + camadas (UML 03), implantação (UML 11). Stack: Java 21, Spring Boot 4.1, PostgreSQL no Neon, Docker no Render |
+| 8–14 | P1 | RMI → gRPC | Stub, skeleton, Registry; limitações (só Java, serialização insegura, firewall); gRPC: contrato `.proto` (linhas reais no slide), Protobuf + HTTP/2. Padrões **Proxy** e **Broker** |
+| 14–17 | P1 | Genéricos | `Repository<Vet, Integer>`, `Map<String, VisitPriceStrategy>`; *type erasure*; tipos brutos; curingas |
 | 17–30 | P2 | Multithreading | Estados de uma thread; thread de plataforma = thread do SO; pool fixo; `Semaphore`; `Callable`/`Future`; virtual threads desmontam da *carrier* ao bloquear. Mostrar o laço do `BenchmarkDemo` |
 | 30–34 | P2 | Observer + `@Async` | Sujeito, evento e observador; por que a resposta HTTP não espera (UML 04). Mostrar a linha do `publishEvent` e o `@Async` do listener |
 | 34–44 | P3 | Princípios e padrões | SOLID com o código (OCP no Strategy, ISP no `VetRepository`, DIP no publisher); Strategy (UML 05), Observer (UML 06), Template Method, Builder; anti-padrão: cadeia de `if/switch` |
 | 44–51 | P3 | Aspectos | Espalhamento e entrelaçamento; pointcut, advice, join point, weaving; AspectJ × Spring AOP (UML 07). Mostrar o `AuditAspect` com as três partes marcadas |
-| 51–57 | P4 | Frameworks | Spring MVC (sucessor do Struts): controller → template; injeção de dependência; JUnit 5 + MockMvc; JasperReports (layout `.jrxml` separado dos dados) |
-| 57–66 | P4 | Banco de dados | JDBC à mão × ORM; `@Entity`, `@Table`, `@ManyToOne`, `@OneToMany` ao lado do `CREATE TABLE`; Spring Data: o repositório é só uma interface e a consulta sai do nome do método; JPQL com `@Query`; transação e rollback; pool HikariCP; o Neon (PostgreSQL gerenciado) e o H2 nos testes |
+| 51–56 | P4 | Frameworks | Slide "Os frameworks do plano": Spring MVC (sucessor do Struts), JPA + Hibernate + Spring Data, JUnit 5 + MockMvc, JasperReports (layout `.jrxml` separado dos dados) |
+| 56–60 | P4 | Do objeto à tabela | Slide `Pet.java` × `schema.sql`: ler as marcas ①–④ aos pares (tabela, coluna, chave estrangeira, coleção) |
+| 60–63 | P4 | Spring Data | Slide do `OwnerRepository`: o nome `findByLastNameStartingWith` decomposto em SQL, e o SQL real que o Hibernate gerou |
+| 63–66 | P4 | Transação | Slide do `INSERT + rollback`: transação, INSERT, rollback; pool HikariCP; o mesmo código no H2 e no Neon |
 | 66–70 | P4 | Fechamento | Tabela Clássico × Moderno (inclui Struts → Spring MVC, JDBC → JPA e o caso Equifax); prévia da prática de quinta |
 
 **Slides:** no máximo um por linha da tabela, com o diagrama UML ou o trecho de código correspondente.
