@@ -103,6 +103,12 @@ class DashboardController {
 		return "dashboard/dashboard";
 	}
 
+	@GetMapping("/painel/observer")
+	String observerChase(Model model) {
+		model.addAttribute("version", ASSETS_VERSION);
+		return "dashboard/observer";
+	}
+
 	record RuntimeInfo(String java, String springBoot, String database, String databaseVersion, String databaseUrl,
 			List<String> profiles, boolean virtualThreads) {
 	}

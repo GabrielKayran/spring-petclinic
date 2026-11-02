@@ -457,7 +457,10 @@ service VetService {
        <input class="form-control form-control-sm" id="visit-description" value="Vacina anual" maxlength="255">
        <button class="btn btn-primary btn-sm" id="visit">Registrar visita</button>
      </div>
-     <div class="dash-result" id="visit-result"><span class="dash-empty">Envia o mesmo POST do formulário. Repare no tempo da resposta e no horário do lembrete.</span></div>`,
+     <div class="dash-result" id="visit-result"><span class="dash-empty">Envia o mesmo POST do formulário. Repare no tempo da resposta e no horário do lembrete.</span></div>
+     <h3 class="mt-3">O padrão sozinho, de forma visual</h3>
+     <p>Um carro roubado (sujeito) avisa as viaturas na escuta do rádio (observadores). Você dirige pelas setas do teclado.</p>
+     <a class="btn btn-outline-secondary btn-sm" href="/painel/observer">Abrir a perseguição &rarr;</a>`,
     ['reminder/VisitRegisteredEvent.java', 'reminder/VisitReminderListener.java', 'reminder/AsyncConfiguration.java', 'owner/VisitController.java']));
 
   // ---------- 4. Strategy ----------

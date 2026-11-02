@@ -125,6 +125,42 @@ class AsyncConfiguration {
 
 A requisição roda em `tomcat-handler-N` e termina; o lembrete roda em `task-N`, 2 s depois. As duas são virtual threads por causa de `spring.threads.virtual.enabled=true`. No painel, o card 3 registra uma visita e mostra essas linhas no console ao vivo.
 
+## Demo visual: a perseguição
+
+Antes de mostrar o Spring, dá para ver o padrão puro em `/painel/observer` (link no card 3 do painel). Um carro roubado é o sujeito; viaturas e um helicóptero são os observadores.
+
+| Tecla | Ação |
+|---|---|
+| setas ou WASD | dirigem o carro roubado |
+| `1` a `5` ou clique na viatura | `attach`/`detach` daquela viatura |
+| `H` | coloca o helicóptero (outro tipo de observador) |
+| `Espaço` / `R` | pausa / reinicia |
+
+Enquanto anda, o carro chama `move()` a cada meio segundo, e `move()` chama `notifyObservers()`. Ao lado do mapa aparecem a lista `observers`, cada `update()` recebido e as linhas do código acendendo.
+
+A página espelha o arquivo [PoliceChase.java](../../demos/observer/PoliceChase.java#L40-L44), que roda sozinho com `java PoliceChase.java`:
+
+```java
+private void notifyObservers() {
+	for (Observer observer : this.observers) {
+		observer.update(this);
+	}
+}
+```
+
+O que mostrar na demo:
+
+- **Tirar uma viatura da escuta (`2`):** ela para e fica cinza. O carro continua avisando, só que ela não está mais na lista.
+- **Colocar o helicóptero (`H`):** o sujeito chama o mesmo `update()`, mas o helicóptero só ilumina e a viatura persegue. O sujeito não sabe a diferença.
+- **Tirar todos:** `notifyObservers()` roda com a lista vazia e ninguém é avisado.
+
+| Papel | Na perseguição | No PetClinic |
+|---|---|---|
+| Sujeito | `StolenCar` | `VisitController` |
+| Aviso | `notifyObservers()` | `publishEvent(new VisitRegisteredEvent(...))` |
+| Observador | `PoliceCar`, `Helicopter` | `VisitReminderListener` |
+| Entrar na lista | `attach(observer)` | `@EventListener` (o Spring faz o *attach*) |
+
 ## Por que é Observer
 
 - O sujeito não conhece o observador: dá para adicionar um `VisitSmsListener` sem tocar no `VisitController` (aberto/fechado).
