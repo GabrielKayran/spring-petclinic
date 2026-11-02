@@ -675,6 +675,19 @@
       clearTimeout(hotTimers.get(n));
       hotTimers.set(n, setTimeout(() => line.classList.remove('hot'), 380));
     });
+    keepVisible(document.querySelector('.chase-line[data-line="' + LINES[group][0] + '"]'));
+  }
+
+  // Scrolls only the code box (never the page) when the executing line is out of view
+  function keepVisible(line) {
+    const box = line && line.parentElement;
+    if (!box || box.scrollHeight <= box.clientHeight) {
+      return;
+    }
+    const top = line.offsetTop - box.offsetTop;
+    if (top < box.scrollTop || top + line.offsetHeight > box.scrollTop + box.clientHeight) {
+      box.scrollTop = Math.max(0, top - box.clientHeight / 3);
+    }
   }
 
   function renderHud() {
