@@ -50,7 +50,7 @@ class DashboardControllerTests {
 	void observerChasePage() throws Exception {
 		this.mockMvc.perform(get("/painel/observer"))
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("id=\"chase-canvas\"")))
+			.andExpect(content().string(containsString("id=\"chase\"")))
 			.andExpect(content().string(containsString("/resources/js/observer.js?v=")));
 	}
 

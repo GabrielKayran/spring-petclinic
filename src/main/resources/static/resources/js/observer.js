@@ -64,6 +64,70 @@
     heli: [79, 80]
   };
 
+  document.getElementById('chase').innerHTML = `
+    <header class="chase-head">
+      <a href="/painel#ext3" class="chase-back">&larr; voltar ao painel</a>
+      <h1>Observer: a perseguição</h1>
+      <p>O carro roubado é o <b>sujeito</b>. Cada viatura na escuta do rádio é um <b>observador</b>. Quando o carro anda,
+        ele avisa todas as que estão na lista, sem saber quem são, e cada uma decide sozinha o que fazer com o aviso.</p>
+    </header>
+
+    <div class="chase-grid">
+      <section class="chase-panel chase-code-panel">
+        <h2>O código executando agora</h2>
+        <figure class="chase-code" id="chase-code"><figcaption>demos/observer/PoliceChase.java</figcaption></figure>
+      </section>
+
+      <div class="chase-stage">
+        <canvas id="chase-canvas" width="960" height="600" tabindex="0"
+          aria-label="Mapa da perseguição. Use as setas para mover o carro roubado."></canvas>
+        <div class="chase-overlay" id="chase-overlay"></div>
+        <div class="chase-hud">
+          <span>notificações <b id="hud-notifications">0</b></span>
+          <span>observadores <b id="hud-observers">0</b></span>
+          <span>tempo <b id="hud-time">0,0 s</b></span>
+        </div>
+        <p class="chase-keys">
+          <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&rarr;</kbd><kbd>&darr;</kbd> movem o carro roubado ·
+          <kbd>1</kbd>–<kbd>5</kbd> ou clique na viatura: entra/sai da escuta ·
+          <kbd>H</kbd> helicóptero · <kbd>Espaço</kbd> pausa · <kbd>R</kbd> reinicia
+        </p>
+      </div>
+
+      <aside class="chase-side">
+        <section class="chase-panel">
+          <h2>A lista de observadores do sujeito</h2>
+          <p class="chase-list" id="chase-list"></p>
+          <div class="chase-buttons" id="chase-buttons"></div>
+          <div class="chase-actions">
+            <button type="button" class="btn btn-primary btn-sm" id="add-police">+ viatura</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="toggle-heli">+ helicóptero</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" id="restart">reiniciar</button>
+          </div>
+        </section>
+
+        <section class="chase-panel">
+          <h2>Chamadas, da mais recente para a mais antiga</h2>
+          <ol class="chase-log" id="chase-log"></ol>
+        </section>
+      </aside>
+    </div>
+
+    <section class="chase-panel chase-map">
+      <h2>O mesmo padrão no PetClinic</h2>
+      <table class="table table-sm">
+        <thead><tr><th>Papel</th><th>Na perseguição</th><th>No PetClinic</th></tr></thead>
+        <tbody>
+          <tr><td>Sujeito</td><td><code>StolenCar</code></td><td><code>VisitController</code></td></tr>
+          <tr><td>Aviso</td><td><code>notifyObservers()</code> com a posição</td><td><code>publishEvent(new VisitRegisteredEvent(...))</code></td></tr>
+          <tr><td>Observador</td><td><code>PoliceCar</code>, <code>Helicopter</code></td><td><code>VisitReminderListener</code></td></tr>
+          <tr><td>Reação</td><td><code>update(car)</code>: ir até a posição</td><td><code>sendReminder(event)</code>: enviar o lembrete</td></tr>
+          <tr><td>Entrar na lista</td><td><code>attach(observer)</code></td><td><code>@EventListener</code> (o Spring faz o <i>attach</i>)</td></tr>
+          <tr><td>Quem avisa</td><td>o próprio carro, num <code>for</code></td><td>o <code>ApplicationEventPublisher</code>, em outra thread com <code>@Async</code></td></tr>
+        </tbody>
+      </table>
+    </section>`;
+
   const canvas = document.getElementById('chase-canvas');
   const ctx = canvas.getContext('2d');
   const overlay = document.getElementById('chase-overlay');
