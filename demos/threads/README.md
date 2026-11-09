@@ -35,3 +35,37 @@ Virtual threads (uma por tarefa)         10.000 tarefas em   1.218 ms
 
 No PetClinic, o mesmo efeito é ligado com uma linha no `application.properties`:
 `spring.threads.virtual.enabled=true`. A prova está em `http://localhost:8080/thread`.
+
+## Outras duas demos
+
+### `RaceCondition.java`: por que sincronizar
+
+```bash
+java RaceCondition.java
+```
+
+Oito threads somam 1 no mesmo contador, um milhão de vezes cada. O `count++` lê, soma e grava em
+três passos: duas threads leem o mesmo valor e uma das somas some. O número perdido muda a cada
+execução.
+
+```
+8 threads, cada uma soma 1 no contador 1.000.000 vezes. Esperado: 8.000.000
+
+Sem sincronização (count++)       1.084.058   perdeu 6.915.942 somas
+synchronized                      8.000.000   correto
+AtomicInteger                     8.000.000   correto
+```
+
+### `CpuBound.java`: quando virtual threads não ajudam
+
+```bash
+java CpuBound.java
+```
+
+A mesma comparação do benchmark, mas cada tarefa calcula (conta primos) em vez de dormir. Com a
+CPU ocupada, o limite é o número de núcleos, e os dois executores levam praticamente o mesmo tempo:
+
+```
+Pool fixo (200 threads de plataforma)       200 tarefas em     924 ms
+Virtual threads (uma por tarefa)            200 tarefas em     824 ms
+```
