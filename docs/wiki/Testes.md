@@ -8,7 +8,7 @@
 ./mvnw test
 ```
 
-Resultado atual: **108 testes, 2 ignorados**. `MySqlIntegrationTests` e `PostgresIntegrationTests` sobem um banco de verdade em contêiner e são pulados automaticamente quando o Docker não está disponível.
+Resultado atual: **109 testes, 2 ignorados**. `MySqlIntegrationTests` e `PostgresIntegrationTests` sobem um banco de verdade em contêiner e são pulados automaticamente quando o Docker não está disponível.
 
 Para rodar uma classe só:
 
