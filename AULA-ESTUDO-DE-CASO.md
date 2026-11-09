@@ -75,7 +75,7 @@ Mantenham o **console ao vivo** do painel visível o tempo todo: é ele que prov
 | 7–12 | P1 | RMI no terminal (`demos/rmi`) | `javac *.java`, `java Server`, `java Client`. Mostrar `extends Remote` e `throws RemoteException` |
 | 12–17 | P1 | Card 1 (gRPC) | Os dois contratos lado a lado; chamada: **169 B em Protobuf × 447 B em JSON**; log `[gRPC]` no console |
 | 17–26 | P2 | Benchmark | Terminal: `java BenchmarkThreads.java 2000` (cerca de 10 s × 1 s). Card 2: **2.000 tarefas** no servidor (≈ 10.000 ms × 1.000 ms) e `GET /thread` (carrier `ForkJoinPool`) |
-| 26–34 | P2 | Card 3 (Observer) | Registrar visita: a resposta volta em menos de 0,5 s e "lembrete enviado" aparece **+2.000 ms** depois em `task-N`. Apontar a linha 118 do `VisitController` marcada no card |
+| 26–34 | P2 | Card 3 (Observer) | Registrar visita: a resposta volta em cerca de 1 s, antes do lembrete terminar e "lembrete enviado" aparece **+2.000 ms** depois em `task-N`. Apontar a linha 118 do `VisitController` marcada no card |
 | 34–43 | P3 | Card 4 (Strategy) + live coding | Tabela de preços; link "tela" da Rosy (**R$ 225,00**). **Live coding** (abaixo): estratégia do hamster, local |
 | 43–48 | P3 | Card 5 (AOP) | Proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada |
 | 48–51 | P3 | Galeria UML | Rastrear diagrama → código (05 → `pricing`, 07 → `audit`) |
