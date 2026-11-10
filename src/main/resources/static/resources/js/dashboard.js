@@ -458,6 +458,14 @@ service VetService {
        <button class="btn btn-primary btn-sm" id="visit">Registrar visita</button>
      </div>
      <div class="dash-result" id="visit-result"><span class="dash-empty">Envia o mesmo POST do formulário. Repare no tempo da resposta e no horário do lembrete.</span></div>
+     <h3 class="mt-3">Com e sem o <code>@Async</code> (não grava visita)</h3>
+     <p>Chama o mesmo <code>sendReminder</code> do listener de duas formas: pelo proxy que o Spring cria por causa do
+       <code>@Async</code>, e direto no objeto, por fora do proxy, como se a anotação não existisse.</p>
+     <div class="dash-actions">
+       <button class="btn btn-primary btn-sm" data-async="true">Pelo proxy (com @Async)</button>
+       <button class="btn btn-outline-secondary btn-sm" data-async="false">Direto no objeto (sem @Async)</button>
+     </div>
+     <div class="dash-result" id="async-result"><span class="dash-empty">Compare o tempo da resposta e a thread de cada linha [Observer].</span></div>
      <h3 class="mt-3">O padrão sozinho, de forma visual</h3>
      <p>Um carro roubado (sujeito) avisa as viaturas na escuta do rádio (observadores). Você dirige pelas setas do teclado.</p>
      <a class="btn btn-outline-secondary btn-sm" href="/painel/observer">Abrir a perseguição &rarr;</a>`,
@@ -844,6 +852,46 @@ CREATE TABLE IF NOT EXISTS visits (
       button.disabled = false;
     }
   });
+
+  root.querySelectorAll('[data-async]').forEach((button) => button.addEventListener('click', async () => {
+    const buttons = root.querySelectorAll('[data-async]');
+    const target = document.getElementById('async-result');
+    const proxy = button.dataset.async === 'true';
+    buttons.forEach((b) => { b.disabled = true; });
+    target.innerHTML = '<span class="dash-empty">chamando...</span><ul class="dash-timeline" id="async-timeline"></ul>';
+    const timeline = document.getElementById('async-timeline');
+
+    let firstTime = null;
+    const stopListening = onLog(
+      (l) => l.source === 'VisitReminderListener' && l.message.includes('Demo do painel'),
+      (l) => {
+        const time = new Date(l.time).getTime();
+        firstTime = firstTime ?? time;
+        timeline.insertAdjacentHTML('beforeend',
+          `<li><span class="delta">+${time - firstTime} ms</span>
+           <code>${escapeHtml(l.thread)}</code> ${escapeHtml(truncate(l.message, 120))}</li>`);
+        if (/lembrete enviado/.test(l.message)) {
+          stopListening();
+        }
+      });
+
+    try {
+      const r = await getJson('/api/dashboard/async?proxy=' + proxy);
+      target.querySelector('.dash-empty').outerHTML =
+        `<div class="dash-metrics"><div class="dash-metric"><span class="value">${r.millis} ms</span><span class="label">a chamada a sendReminder levou</span></div>
+           <div class="dash-metric"><span class="value"><code>${escapeHtml(r.requestThread)}</code></span><span class="label">thread da requisição</span></div></div>
+         <p class="small text-muted mb-1">Objeto chamado: <code>${escapeHtml(r.calledClass)}</code>. ${proxy
+           ? 'É o proxy: ele entregou o método ao executor e voltou na hora. O lembrete roda em <code>task-N</code>.'
+           : 'É o objeto original: ninguém intercepta a chamada, então o lembrete roda na thread da requisição, que espera os 2 s.'}</p>`;
+    }
+    catch (e) {
+      stopListening();
+      showError(target, e);
+    }
+    finally {
+      buttons.forEach((b) => { b.disabled = false; });
+    }
+  }));
 
   // ---------------------------------------------------------------------------
   // 5. AOP
