@@ -88,7 +88,7 @@ A produção roda no **Render** com o banco **PostgreSQL no Neon**, conforme o [
 ./mvnw test
 ```
 
-São 109 testes. Os de integração com MySQL e PostgreSQL usam Docker e são pulados quando ele não está disponível. A wiki tem uma página explicando [o que cada teste prova](docs/wiki/Testes.md).
+São 111 testes. Os de integração com MySQL e PostgreSQL usam Docker e são pulados quando ele não está disponível. A wiki tem uma página explicando [o que cada teste prova](docs/wiki/Testes.md).
 
 O build também verifica a formatação (`spring-javaformat`). Para corrigi-la automaticamente:
 

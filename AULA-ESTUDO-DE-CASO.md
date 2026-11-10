@@ -80,7 +80,7 @@ Mantenham o **console ao vivo** do painel visível o tempo todo: é ele que prov
 | 43–48 | P3 | Card 5 (AOP) | Proxies (`VetController$$SpringCGLIB$$0`); `GET /vets` gera `[AUDITORIA]`; `GET /` não gera nada |
 | 48–51 | P3 | Galeria UML | Rastrear diagrama → código (05 → `pricing`, 07 → `audit`) |
 | 51–62 | P4 | Card 7 (Banco) | Ler o caminho da consulta e a classe ao lado da tabela (①–④). **Contar linhas**. Clicar nas quatro chamadas: `findById` traz dono, pets e visitas em 2 comandos; `findByLastNameStartingWith` vira `like ?` sem ninguém ter escrito SQL; `@Query` em JPQL vira SQL; `INSERT + rollback`: contar as linhas de novo e mostrar que `types` não mudou. Depois, registrar uma visita no card 3 e contar: `visits` aumenta |
-| 62–65 | P4 | Card 6 (Relatório) + testes | PDF com pets por tipo e preço (total de hoje: **R$ 1.710,00**; muda com a idade dos cachorros). Terminal: `./mvnw test` → **109 testes, 0 falhas** |
+| 62–65 | P4 | Card 6 (Relatório) + testes | PDF com pets por tipo e preço (total de hoje: **R$ 1.710,00**; muda com a idade dos cachorros). Terminal: `./mvnw test` → **111 testes, 0 falhas** |
 | 65–70 | todos | Perguntas | Usar a lista de perguntas prováveis abaixo |
 
 ### Live coding: Strategy e o princípio Aberto/Fechado (cerca de 3 min, local)
